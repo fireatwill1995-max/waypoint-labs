@@ -1,5 +1,7 @@
 'use client'
 
+import Image from 'next/image'
+
 interface WaypointLogoProps {
   className?: string
   size?: number
@@ -12,12 +14,12 @@ export default function WaypointLogo({ className = '', size = 40 }: WaypointLogo
       style={{ width: size, height: size }}
       aria-hidden
     >
-      <img
+      <Image
         src="/logo.svg"
         alt=""
         width={size}
         height={size}
-        className="w-full h-full object-contain"
+        className="object-contain"
       />
     </div>
   )

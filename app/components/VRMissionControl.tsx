@@ -52,9 +52,9 @@ export default function VRMissionControl({ drones: _drones, waypoints: _waypoint
 
   const enterVR = async () => {
     try {
-      // @ts-ignore
-      const session = await navigator.xr?.requestSession('immersive-vr')
-      setIsVRActive(true)
+      const xr = (navigator as Navigator & { xr?: { requestSession: (mode: string) => Promise<unknown> } }).xr
+      const session = await xr?.requestSession('immersive-vr')
+      if (session) setIsVRActive(true)
       // In production, would render 3D scene in VR
     } catch (error) {
       logger.error('Failed to enter VR:', error)
