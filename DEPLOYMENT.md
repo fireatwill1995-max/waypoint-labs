@@ -133,7 +133,14 @@ The repo includes a **Dockerfile** for the Next.js app (standalone output). It d
      - `CLOUDFLARE_ACCOUNT_ID` (from Cloudflare Dashboard → right sidebar)
    - Optional **Variables**: `NEXT_PUBLIC_APP_URL` (frontend live URL for manifest/OG), `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_WS_URL` (default to `https://civilian-drone-app.fly.dev` and `wss://civilian-drone-app.fly.dev`).
    - Push to `main` or `master` runs “Deploy to Cloudflare Pages”: builds with `BUILD_FOR_CF=1` (static export) and deploys the `out` directory.
-3. Live frontend URL: `https://civilian-drone-app.pages.dev` (or your custom domain). Set `NEXT_PUBLIC_APP_URL` to that URL in repo Variables so manifest and Open Graph use the correct base.
+3. Live frontend URL: `https://waypoint-labs.pages.dev` (or your custom domain). Set `NEXT_PUBLIC_APP_URL` to that URL in repo Variables so manifest and Open Graph use the correct base.
+
+## Repo not loading to Cloudflare?
+
+1. **Project name must match:** The workflow deploys to a project named **waypoint-labs**. In Cloudflare: **Workers & Pages** → **Create application** → **Pages** → **Create with Direct Upload** → set name to **waypoint-labs** (no spaces). If you already created a project with another name, either rename it to `waypoint-labs` or change `projectName` in `.github/workflows/deploy-cloudflare.yml` to match.
+2. **Secrets in GitHub:** **Settings** → **Secrets and variables** → **Actions** → add **CLOUDFLARE_API_TOKEN** and **CLOUDFLARE_ACCOUNT_ID**. Token needs “Edit Cloudflare Workers” (or “Cloudflare Pages” edit) permission; Account ID is in the dashboard URL or right sidebar.
+3. **Branch:** The workflow runs on push to **main** or **master**. Push to one of those branches (or run the workflow manually from the Actions tab).
+4. **Direct Upload:** The Action builds in GitHub and uploads the `out` folder. The Cloudflare project must be created with **Direct Upload** (not “Connect to Git”) so it accepts uploads from the API.
 
 ## Notes
 

@@ -100,10 +100,10 @@ Your repo URL will be: **https://github.com/waypointlabs/civilian-drone-app** (o
    - Project name: `civilian-drone-app`.
    - After that, the GitHub Action can deploy to it (using the same project name in the workflow).
 
-   **Or** use only the Action: ensure the workflow has the correct `projectName: civilian-drone-app`. Some Cloudflare accounts auto-create the project on first deploy.
+   **Or** use only the Action: ensure the workflow has `projectName: waypoint-labs`. Create the project in Cloudflare first: Pages → Direct Upload → name **waypoint-labs**.
 
 6. **Cloudflare app URL**
-   - **https://civilian-drone-app.pages.dev**  
+   - **https://waypoint-labs.pages.dev**  
    - Or the URL shown in **Workers & Pages** for that project.
 
 ---
@@ -127,7 +127,7 @@ Then re-run **“Deploy to Cloudflare Pages”**. The Cloudflare site will call 
 |-------------|-----|
 | **GitHub repo** | https://github.com/waypointlabs/civilian-drone-app |
 | **Fly.io app**  | https://civilian-drone-app.fly.dev |
-| **Cloudflare Pages** | https://civilian-drone-app.pages.dev |
+| **Cloudflare Pages** | https://waypoint-labs.pages.dev |
 
 Use **Fly.io** for the full Next.js app (recommended). Use **Cloudflare** as a static front that talks to the Fly backend if you set the variables above.
 

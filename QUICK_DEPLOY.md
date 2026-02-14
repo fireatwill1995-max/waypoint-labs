@@ -4,7 +4,7 @@ Do these in order. When done, you’ll have:
 
 - **GitHub repo:** `https://github.com/waypointlabs/civilian-drone-app`
 - **Fly.io app:** `https://civilian-drone-app.fly.dev`
-- **Cloudflare Pages:** `https://civilian-drone-app.pages.dev`
+- **Cloudflare Pages:** `https://waypoint-labs.pages.dev`
 
 ---
 
@@ -66,7 +66,7 @@ When it’s green, the app is live at: **https://civilian-drone-app.fly.dev**
    **https://github.com/waypointlabs/civilian-drone-app/actions**  
    - **“Deploy to Cloudflare Pages”** → **Run workflow**.
 
-Cloudflare URL: **https://civilian-drone-app.pages.dev**
+Cloudflare URL: **https://waypoint-labs.pages.dev**
 
 ---
 
@@ -75,7 +75,7 @@ Cloudflare URL: **https://civilian-drone-app.pages.dev**
 | Service        | URL |
 |----------------|-----|
 | **Fly.io**     | https://civilian-drone-app.fly.dev |
-| **Cloudflare** | https://civilian-drone-app.pages.dev |
+| **Cloudflare** | https://waypoint-labs.pages.dev |
 | **GitHub repo**| https://github.com/waypointlabs/civilian-drone-app |
 
 Use **Fly.io** as the main app URL. Add API keys later via Fly secrets or Cloudflare env vars (see APIS_AND_INTEGRATIONS.md).

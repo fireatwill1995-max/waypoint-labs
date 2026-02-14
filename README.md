@@ -14,9 +14,9 @@ Drone flight control platform with fully automated missions, semi-automated work
 
 ## Deploy: Cloudflare (frontend) + Fly (backend)
 
-- **Frontend:** Cloudflare Pages — static export via GitHub Actions on push to `main` or `master`. Live URL: set `NEXT_PUBLIC_APP_URL` in Cloudflare Pages env (e.g. `https://civilian-drone-app.pages.dev` or your custom domain) so manifest and OG tags use the correct base.
+- **Frontend:** Cloudflare Pages — static export via GitHub Actions on push to `main` or `master`. Project name in workflow: **waypoint-labs** (create it in Cloudflare with Direct Upload). Live URL: `https://waypoint-labs.pages.dev`; set `NEXT_PUBLIC_APP_URL` if you use a custom domain.
 - **Backend:** Fly.io — deploy with `fly deploy` or GitHub Action; API at `https://civilian-drone-app.fly.dev`. Set Fly secrets `NEXT_PUBLIC_API_URL` / `NEXT_PUBLIC_WS_URL` if you use a different backend URL.
-- **In the repo:** `app/config/site.ts` defaults to `https://civilian-drone-app.pages.dev`; override with `NEXT_PUBLIC_APP_URL` in Cloudflare build env.
+- **In the repo:** `app/config/site.ts` defaults to `https://waypoint-labs.pages.dev`; override with `NEXT_PUBLIC_APP_URL` in repo Variables if needed.
 
 See `DEPLOYMENT.md` and `.github/workflows/` for details.
 

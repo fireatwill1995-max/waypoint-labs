@@ -7,11 +7,11 @@ function getBaseUrl(): string {
   if (typeof process.env.NEXT_PUBLIC_APP_URL === 'string' && process.env.NEXT_PUBLIC_APP_URL) {
     return process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, '')
   }
-  return 'https://civilian-drone-app.pages.dev'
+  return 'https://waypoint-labs.pages.dev'
 }
 
 export const siteConfig = {
-  /** Full origin (e.g. https://waypoint-labs.vercel.app) — no trailing slash */
+  /** Full origin (e.g. https://waypoint-labs.pages.dev) — no trailing slash */
   baseUrl: getBaseUrl(),
   name: 'Waypoint Labs',
   shortName: 'Waypoint Labs',
