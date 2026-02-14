@@ -12,15 +12,13 @@ Drone flight control platform with fully automated missions, semi-automated work
 - **Mission Planning Hub**: Unified hub for 3D preview, pattern generator, and mission templates
 - **Operations**: Cattle mustering, hunting, people recognition, filming, fishing, mining (Australia) with AI route planning and compliance
 
-## Live URL & Vercel
+## Deploy: Cloudflare (frontend) + Fly (backend)
 
-The app is configured to run on **Vercel**. The live URL is set automatically from Vercel’s `VERCEL_URL`, or you can set it explicitly:
+- **Frontend:** Cloudflare Pages — static export via GitHub Actions on push to `main` or `master`. Live URL: set `NEXT_PUBLIC_APP_URL` in Cloudflare Pages env (e.g. `https://civilian-drone-app.pages.dev` or your custom domain) so manifest and OG tags use the correct base.
+- **Backend:** Fly.io — deploy with `fly deploy` or GitHub Action; API at `https://civilian-drone-app.fly.dev`. Set Fly secrets `NEXT_PUBLIC_API_URL` / `NEXT_PUBLIC_WS_URL` if you use a different backend URL.
+- **In the repo:** `app/config/site.ts` defaults to `https://civilian-drone-app.pages.dev`; override with `NEXT_PUBLIC_APP_URL` in Cloudflare build env.
 
-- **In the repo:** Edit `app/config/site.ts` — the default fallback is `https://waypoint-labs.vercel.app`. Change it if your live URL is different and you don’t use env.
-- **On Vercel (recommended):** Project → Settings → Environment Variables → add:
-  - `NEXT_PUBLIC_APP_URL` = your production URL (e.g. `https://your-project.vercel.app` or your custom domain).
-
-With this, links, Open Graph, and the PWA manifest use the correct base URL. Optional: set `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_WS_URL` if you run a separate backend.
+See `DEPLOYMENT.md` and `.github/workflows/` for details.
 
 ## Setup
 

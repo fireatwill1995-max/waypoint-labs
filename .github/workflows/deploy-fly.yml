@@ -1,11 +1,11 @@
-# Deploy Waypoint Labs to Fly.io on push to main
+# Deploy Waypoint Labs backend to Fly.io on push
 # Secrets required: FLY_API_TOKEN (from https://fly.io/user/settings/tokens)
 
 name: Deploy to Fly.io
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
   workflow_dispatch:
 
 jobs:

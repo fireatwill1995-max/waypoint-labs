@@ -77,52 +77,32 @@ The backend exposes endpoints that can be wired to MAVLink/DroneKit/real drone l
 
 Frontend helpers: `app/lib/sdk.ts` – `sendSDKCommand()`, `uploadWaypoints()`, `getSDKTelemetry()`.
 
-## Deploying to Fly.io (frontend)
+## Deploying to Fly.io (backend)
 
-### Option A: Deploy via GitHub Actions (recommended)
+**Frontend** is on **Cloudflare Pages** (see below). **Backend** (Python API) runs on Fly.io. The Cloudflare build sets `NEXT_PUBLIC_API_URL` / `NEXT_PUBLIC_WS_URL` to your Fly backend URL (e.g. `https://civilian-drone-app.fly.dev`).
+
+### Option A: Deploy via GitHub Actions
 
 1. Push the repo to **GitHub**.
 2. Get a Fly.io API token: [fly.io/user/settings/tokens](https://fly.io/user/settings/tokens) → Create token.
 3. In GitHub: **Settings → Secrets and variables → Actions** → New repository secret:
    - Name: `FLY_API_TOKEN`  
    - Value: your Fly API token
-4. Push to the `main` branch (or run the workflow manually: Actions → Deploy to Fly.io → Run workflow).
-5. First run: ensure the Fly app exists (`fly apps create civilian-drone-app` from your machine once, or let the first deploy create it).
-6. Set secrets on Fly (for backend URL if different):
+4. Push to `main` or `master` (or run the workflow manually: Actions → Deploy to Fly.io → Run workflow).
+5. Ensure the Fly app exists (`fly apps create civilian-drone-app` once if needed).
+6. Set secrets on Fly for the backend (if your API URL differs):
    ```bash
-   flyctl secrets set NEXT_PUBLIC_API_URL=https://your-backend.fly.dev
-   flyctl secrets set NEXT_PUBLIC_WS_URL=wss://your-backend.fly.dev
+   flyctl secrets set NEXT_PUBLIC_API_URL=https://civilian-drone-app.fly.dev
+   flyctl secrets set NEXT_PUBLIC_WS_URL=wss://civilian-drone-app.fly.dev
    ```
-   Or leave unset to use the same Fly app (rewrites proxy to NEXT_PUBLIC_API_URL from env).
 
 ### Option B: Deploy from your machine
 
-1. **Login**
-   ```bash
-   flyctl auth login
-   ```
-
-2. **Create app (if needed)**
-   ```bash
-   flyctl apps create civilian-drone-app
-   ```
-
-3. **Secrets**
-   ```bash
-   flyctl secrets set NEXT_PUBLIC_API_URL=https://your-api-url.com
-   flyctl secrets set NEXT_PUBLIC_WS_URL=wss://your-api-url.com
-   ```
-
-4. **Deploy**
-   ```bash
-   flyctl deploy
-   ```
-
-5. **Check**
-   ```bash
-   flyctl open
-   flyctl logs
-   ```
+1. **Login:** `flyctl auth login`
+2. **Create app (if needed):** `flyctl apps create civilian-drone-app`
+3. **Secrets (if needed):** `flyctl secrets set NEXT_PUBLIC_API_URL=...` and `NEXT_PUBLIC_WS_URL=...`
+4. **Deploy:** `flyctl deploy`
+5. **Check:** `flyctl open` and `flyctl logs`
 
 ## Application Features
 
@@ -142,21 +122,20 @@ The repo includes a **Dockerfile** for the Next.js app (standalone output). It d
 - **CORS errors with ngrok:** Set `CORS_ORIGINS=https://your-ngrok-url.ngrok-free.dev` or `CORS_ALLOW_ALL=1` for dev.
 - **WebSocket:** Use `wss://` in production for `NEXT_PUBLIC_WS_URL`.
 
-## Deploying to Cloudflare Pages (via GitHub)
+## Deploying to Cloudflare Pages (frontend)
+
+**Frontend** is static on **Cloudflare Pages**. **Backend** is on **Fly.io**; the frontend calls it via `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_WS_URL`.
 
 1. Push the repo to **GitHub**.
-2. In Cloudflare Dashboard: **Workers & Pages** → Create application → **Pages** → **Connect to Git** → select the repo.
-3. **Or** use the included GitHub Action:
+2. **Use the included GitHub Action:**
    - In GitHub: **Settings → Secrets and variables → Actions** → add:
      - `CLOUDFLARE_API_TOKEN` (from Cloudflare: My Profile → API Tokens → Create Token, “Edit Cloudflare Workers” template)
      - `CLOUDFLARE_ACCOUNT_ID` (from Cloudflare Dashboard → right sidebar)
-   - Optional: **Settings → Secrets and variables → Actions → Variables**: `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_WS_URL` (e.g. your Fly backend).
-   - Push to `main` runs the “Deploy to Cloudflare Pages” workflow. It builds with static export and deploys the `out` directory.
-4. In Cloudflare Pages project settings, set **Environment variables** (production) if needed: `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_WS_URL`, `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` (the workflow can also use GitHub vars/secrets for build).
-5. The Cloudflare build uses `BUILD_FOR_CF=1` so the app is exported as static; API calls go to `NEXT_PUBLIC_API_URL` (set your backend URL so the frontend can reach it).
+   - Optional **Variables**: `NEXT_PUBLIC_APP_URL` (frontend live URL for manifest/OG), `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_WS_URL` (default to `https://civilian-drone-app.fly.dev` and `wss://civilian-drone-app.fly.dev`).
+   - Push to `main` or `master` runs “Deploy to Cloudflare Pages”: builds with `BUILD_FOR_CF=1` (static export) and deploys the `out` directory.
+3. Live frontend URL: `https://civilian-drone-app.pages.dev` (or your custom domain). Set `NEXT_PUBLIC_APP_URL` to that URL in repo Variables so manifest and Open Graph use the correct base.
 
 ## Notes
 
 - Next.js 14 App Router; demo auth only (no Clerk).
-- Backend can be deployed on Fly.io, Railway, or any host; set `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_WS_URL` to that host.
-- **Fly.io** runs the full Next.js server (standalone + Dockerfile). **Cloudflare Pages** runs a static export; point `NEXT_PUBLIC_API_URL` at your backend.
+- **Cloudflare Pages** = frontend (static). **Fly.io** = backend; set `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_WS_URL` to your Fly backend so the frontend can reach it.

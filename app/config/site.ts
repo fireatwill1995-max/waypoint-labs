@@ -1,16 +1,13 @@
 /**
  * Live app URL — used for canonical links, OG tags, and manifest.
- * Set NEXT_PUBLIC_APP_URL in Vercel (or .env) to your production URL.
- * On Vercel, VERCEL_URL is set automatically; we use NEXT_PUBLIC_APP_URL when set for custom domains.
+ * Frontend: Cloudflare Pages. Backend: Fly.io.
+ * Set NEXT_PUBLIC_APP_URL in Cloudflare Pages env (or .env) to your frontend URL.
  */
 function getBaseUrl(): string {
   if (typeof process.env.NEXT_PUBLIC_APP_URL === 'string' && process.env.NEXT_PUBLIC_APP_URL) {
     return process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, '')
   }
-  if (typeof process.env.VERCEL_URL === 'string' && process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`
-  }
-  return 'https://waypoint-labs.vercel.app'
+  return 'https://civilian-drone-app.pages.dev'
 }
 
 export const siteConfig = {
