@@ -33,11 +33,13 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# CORS - allow localhost, 3001, and CORS_ORIGINS (e.g. ngrok URL). Set CORS_ALLOW_ALL=1 to allow any origin (dev/ngrok).
+# CORS - allow localhost, Cloudflare Pages, and CORS_ORIGINS. Set CORS_ALLOW_ALL=1 to allow any origin.
 _cors_origins = [
     "http://localhost:3000", "http://127.0.0.1:3000",
     "http://localhost:3001", "http://127.0.0.1:3001",
     "http://localhost:3002", "http://127.0.0.1:3002",
+    "https://civilian-drone-app.pages.dev",
+    "https://waypoint-labs.pages.dev",
 ]
 _extra = (os.getenv("CORS_ORIGINS") or "").strip()
 if _extra:
@@ -424,6 +426,14 @@ async def get_ai_engine_status():
     }
 
 # Civilian detection endpoints
+@app.get("/api/civilian/detect")
+async def detect_objects_get(mode: Optional[str] = None):
+    """GET /api/civilian/detect?mode=cattle — used by frontend; returns stub detections."""
+    try:
+        return DetectionResponse(detections=[], confidence=0.0)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/api/civilian/detect")
 async def detect_objects(request: DetectionRequest):
     """Detect objects in images"""

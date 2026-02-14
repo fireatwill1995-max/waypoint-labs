@@ -79,7 +79,7 @@ Frontend helpers: `app/lib/sdk.ts` – `sendSDKCommand()`, `uploadWaypoints()`, 
 
 ## Deploying to Fly.io (backend)
 
-**Frontend** is on **Cloudflare Pages** (see below). **Backend** (Python API) runs on Fly.io. The Cloudflare build sets `NEXT_PUBLIC_API_URL` / `NEXT_PUBLIC_WS_URL` to your Fly backend URL (e.g. `https://civilian-drone-app.fly.dev`).
+**Frontend** is on **Cloudflare Pages** (see below). **Backend** (Python API) runs on Fly.io. The repo’s `fly.toml` uses `Dockerfile.backend` (Python + FastAPI on port 8000). The Cloudflare build sets `NEXT_PUBLIC_API_URL` / `NEXT_PUBLIC_WS_URL` to your Fly backend URL (e.g. `https://civilian-drone-app.fly.dev`).
 
 ### Option A: Deploy via GitHub Actions
 

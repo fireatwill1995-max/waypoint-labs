@@ -1,20 +1,18 @@
-# fly.toml – JARVIS AI Civilian Drone App
-# Deploy: fly deploy (or push to main with GitHub Actions)
+# fly.toml – Python backend API (frontend is on Cloudflare Pages)
+# Deploy: fly deploy (or push to main/master with GitHub Actions)
 # See https://fly.io/docs/reference/configuration/
 
 app = "civilian-drone-app"
 primary_region = "iad"
 
 [build]
-  dockerfile = "Dockerfile"
+  dockerfile = "Dockerfile.backend"
 
 [env]
-  NODE_ENV = "production"
-  PORT = "3000"
-  HOSTNAME = "0.0.0.0"
+  PORT = "8000"
 
 [http_service]
-  internal_port = 3000
+  internal_port = 8000
   force_https = true
   auto_stop_machines = "stop"
   auto_start_machines = true
@@ -26,7 +24,7 @@ primary_region = "iad"
     interval = "30s"
     method = "GET"
     timeout = "5s"
-    path = "/"
+    path = "/api/status"
 
 [[vm]]
   cpu_kind = "shared"
