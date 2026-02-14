@@ -58,18 +58,40 @@
     padding-right: 0;
   }
 
-  /* Watermark background for dark mode: subtle grid + waypoint mark */
+  /* Default watermark: control-center image (single drone control pic) */
   html.dark body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background-image: url('/watermark.svg');
-    background-size: 1200px 1200px;
+    background-image: url('/watermarks/control-center.png');
+    background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    opacity: 0.35;
+    opacity: 0.28;
     pointer-events: none;
     z-index: 0;
+  }
+
+  /* Section-specific watermarks (4-way quadrants): override when present */
+  html.dark body.watermark-mustering::before {
+    background-image: url('/watermarks/mustering.png');
+    background-size: cover;
+    opacity: 0.25;
+  }
+  html.dark body.watermark-hunting::before {
+    background-image: url('/watermarks/hunting.png');
+    background-size: cover;
+    opacity: 0.25;
+  }
+  html.dark body.watermark-fishing::before {
+    background-image: url('/watermarks/fishing.png');
+    background-size: cover;
+    opacity: 0.25;
+  }
+  html.dark body.watermark-coastal::before {
+    background-image: url('/watermarks/coastal-surveillance.png');
+    background-size: cover;
+    opacity: 0.25;
   }
 
   /* App page background (slightly lighter dark theme) */

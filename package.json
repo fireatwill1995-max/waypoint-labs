@@ -8,7 +8,8 @@
     "build": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true});\" && next build",
     "start": "next start",
     "lint": "next lint",
-    "ngrok": "node scripts/ngrok.js"
+    "ngrok": "node scripts/ngrok.js",
+    "watermarks:split": "node scripts/split-watermarks.js public/watermarks/source/4way.png public/watermarks/source/control-center.png"
   },
   "dependencies": {
     "next": "^14.2.0",
@@ -23,8 +24,8 @@
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.2.0",
     "postcss": "^8.4.47",
+    "sharp": "^0.34.5",
     "tailwindcss": "^3.4.0",
     "typescript": "^5.5.0"
   }
 }
-

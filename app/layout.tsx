@@ -6,6 +6,7 @@ import ScrollToTop from './components/ScrollToTop'
 import BackButton from './components/BackButton'
 import SkipToContent from './components/SkipToContent'
 import ConsoleErrorLogger from './components/ConsoleErrorLogger'
+import WatermarkBody from './components/WatermarkBody'
 
 export const metadata = {
   title: 'Waypoint Labs | Drone Flight Control — Automated Missions, More Drones',
@@ -37,6 +38,7 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body className="antialiased">
+        <WatermarkBody />
         <ConsoleErrorLogger />
         <ErrorBoundary>
           <SkipToContent />
