@@ -1,0 +1,1274 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+  }
+
+  html {
+    @apply scroll-smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  
+  /* Ensure crisp rendering for all elements */
+  * {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+  
+  /* Smooth rendering for images and icons */
+  img, svg, canvas {
+    image-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950;
+    @apply text-slate-900 dark:text-slate-100;
+    @apply font-sans;
+    max-width: 100vw;
+    overflow-x: hidden;
+    min-height: 100vh;
+    /* Mobile optimizations */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    /* Prevent layout shifts */
+    padding-right: 0;
+  }
+  
+  /* Mobile-specific styles */
+  @media (max-width: 768px) {
+    body {
+      font-size: 16px; /* Prevent iOS zoom on input focus */
+    }
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-slate-100 dark:bg-slate-900;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 dark:bg-slate-700 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-400 dark:bg-slate-600;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Focus visible for accessibility — match DJI accent */
+  *:focus-visible {
+    outline: 2px solid #0971CE;
+    outline-offset: 2px;
+  }
+
+  /* Screen reader only - for accessibility */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .sr-only:focus,
+  .focus\:not-sr-only:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: inherit;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+}
+
+@layer components {
+  /* Premium Glassmorphism with Liquid Glass Effect */
+  .glass {
+    @apply bg-white/10 dark:bg-white/5;
+    @apply backdrop-blur-xl;
+    @apply border border-white/20 dark:border-white/10;
+    @apply shadow-glass;
+    @apply relative;
+    @apply overflow-hidden;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    box-shadow: 
+      0 8px 32px 0 rgba(31, 38, 135, 0.37),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.1),
+      0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+
+  .glass::before {
+    content: '';
+    @apply absolute inset-0;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
+    @apply opacity-0 transition-opacity duration-500;
+    pointer-events: none;
+  }
+
+  .glass:hover::before {
+    @apply opacity-100;
+  }
+
+  .glass-strong {
+    @apply bg-white/20 dark:bg-white/10;
+    @apply backdrop-blur-2xl;
+    @apply border border-white/30 dark:border-white/20;
+    @apply shadow-glass-lg;
+    @apply relative;
+    @apply overflow-hidden;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+    box-shadow: 
+      0 12px 48px 0 rgba(31, 38, 135, 0.5),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.15),
+      0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-strong::before {
+    content: '';
+    @apply absolute inset-0;
+    background: radial-gradient(
+      circle at 30% 30%,
+      rgba(255, 255, 255, 0.15) 0%,
+      transparent 50%
+    );
+    @apply opacity-0 transition-opacity duration-700;
+    pointer-events: none;
+  }
+
+  .glass-strong:hover::before {
+    @apply opacity-100;
+  }
+
+  /* Premium Modern Button Styles with Liquid Glass */
+  .btn-primary {
+    @apply relative;
+    @apply px-8 py-4;
+    @apply bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600;
+    @apply text-white font-semibold;
+    @apply rounded-2xl;
+    @apply shadow-lg shadow-blue-500/50;
+    @apply transition-all duration-300;
+    @apply transform hover:scale-[1.02] active:scale-[0.98];
+    @apply hover:shadow-2xl hover:shadow-blue-500/70;
+    @apply overflow-hidden;
+    @apply border border-white/20;
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease infinite;
+  }
+
+  .btn-primary::before {
+    content: '';
+    @apply absolute inset-0;
+    @apply bg-gradient-to-r from-white/0 via-white/30 to-white/0;
+    @apply opacity-0 transition-opacity duration-500;
+    @apply -translate-x-full;
+    @apply rounded-2xl;
+  }
+
+  .btn-primary:hover::before {
+    @apply opacity-100 translate-x-full;
+    @apply transition-transform duration-700;
+  }
+
+  .btn-primary::after {
+    content: '';
+    @apply absolute inset-0;
+    @apply bg-gradient-to-br from-white/10 to-transparent;
+    @apply opacity-50;
+    pointer-events: none;
+  }
+
+  .btn-secondary {
+    @apply relative;
+    @apply px-6 py-3;
+    @apply bg-white/80 dark:bg-slate-800/80;
+    @apply backdrop-blur-sm;
+    @apply text-slate-900 dark:text-slate-100;
+    @apply border border-slate-200 dark:border-slate-700;
+    @apply font-semibold;
+    @apply rounded-xl;
+    @apply shadow-md;
+    @apply transition-all duration-300;
+    @apply transform hover:scale-105 active:scale-95;
+    @apply hover:bg-white dark:hover:bg-slate-800;
+    @apply hover:shadow-lg;
+  }
+
+  .btn-success {
+    @apply relative;
+    @apply px-6 py-3;
+    @apply bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700;
+    @apply text-white font-semibold;
+    @apply rounded-xl;
+    @apply shadow-lg shadow-emerald-500/50;
+    @apply transition-all duration-300;
+    @apply transform hover:scale-105 active:scale-95;
+    @apply hover:shadow-xl hover:shadow-emerald-500/60;
+  }
+
+  .btn-danger {
+    @apply relative;
+    @apply px-6 py-3;
+    @apply bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700;
+    @apply text-white font-semibold;
+    @apply rounded-xl;
+    @apply shadow-lg shadow-red-500/50;
+    @apply transition-all duration-300;
+    @apply transform hover:scale-105 active:scale-95;
+    @apply hover:shadow-xl hover:shadow-red-500/60;
+  }
+
+  /* Premium Card Styles with Enhanced Effects */
+  .card {
+    @apply bg-white/90 dark:bg-slate-800/90;
+    @apply backdrop-blur-2xl;
+    @apply border border-slate-200/60 dark:border-slate-700/60;
+    @apply rounded-3xl;
+    @apply shadow-2xl;
+    @apply transition-all duration-500;
+    @apply relative;
+    @apply overflow-hidden;
+    box-shadow: 
+      0 20px 60px -12px rgba(0, 0, 0, 0.25),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .card::before {
+    content: '';
+    @apply absolute inset-0;
+    @apply bg-gradient-to-br from-white/10 via-transparent to-transparent;
+    @apply opacity-0 transition-opacity duration-500;
+    pointer-events: none;
+  }
+
+  .card:hover::before {
+    @apply opacity-100;
+  }
+
+  .card-hover {
+    @apply card;
+    @apply transform hover:scale-[1.02] hover:shadow-[0_25px_80px_-12px_rgba(0,0,0,0.35)];
+    @apply hover:border-blue-400/60 dark:hover:border-blue-500/60;
+    @apply hover:-translate-y-1;
+  }
+
+  .card-glass {
+    @apply glass;
+    @apply rounded-3xl;
+    @apply p-8;
+    @apply transition-all duration-500;
+    @apply hover:shadow-[0_25px_80px_-12px_rgba(31,38,135,0.5)];
+  }
+
+  /* Status indicators */
+  .status-online {
+    @apply inline-flex items-center gap-2;
+    @apply px-3 py-1.5;
+    @apply bg-emerald-500/20 dark:bg-emerald-500/30;
+    @apply border border-emerald-500/50;
+    @apply text-emerald-700 dark:text-emerald-400;
+    @apply rounded-lg;
+    @apply text-sm font-semibold;
+  }
+
+  .status-online::before {
+    content: '';
+    @apply w-2 h-2;
+    @apply bg-emerald-500;
+    @apply rounded-full;
+    @apply animate-pulse;
+  }
+
+  .status-offline {
+    @apply inline-flex items-center gap-2;
+    @apply px-3 py-1.5;
+    @apply bg-red-500/20 dark:bg-red-500/30;
+    @apply border border-red-500/50;
+    @apply text-red-700 dark:text-red-400;
+    @apply rounded-lg;
+    @apply text-sm font-semibold;
+  }
+
+  .status-offline::before {
+    content: '';
+    @apply w-2 h-2;
+    @apply bg-red-500;
+    @apply rounded-full;
+  }
+
+  /* Animated background */
+  .bg-animated {
+    @apply relative;
+    @apply overflow-hidden;
+  }
+
+  .bg-animated::before {
+    content: '';
+    @apply absolute inset-0;
+    @apply bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-pink-600/20;
+    @apply animate-gradient-xy;
+    @apply opacity-50;
+  }
+
+  /* Text gradients */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600;
+  }
+
+  .text-gradient-blue {
+    @apply bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-blue-500 to-cyan-500;
+  }
+
+  .text-gradient-green {
+    @apply bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-emerald-500 to-green-500;
+  }
+
+  .text-gradient-emerald {
+    @apply bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-400;
+  }
+
+  /* ============================================
+     GCS - Ground Control Station (Unified Pro Drone UI)
+     ============================================ */
+
+  .glass-gcs {
+    @apply bg-slate-900/70 dark:bg-slate-900/80;
+    @apply backdrop-blur-xl;
+    @apply border border-cyan-500/20;
+    @apply shadow-[0_8px_32px_0_rgba(0,212,255,0.12)];
+  }
+
+  .panel-gcs {
+    @apply glass-gcs rounded-lg overflow-hidden relative;
+    @apply border-t border-cyan-500/30;
+  }
+
+  .panel-gcs::before {
+    content: '';
+    @apply absolute top-0 left-0 right-0 h-px;
+    @apply bg-gradient-to-r from-transparent via-cyan-500/60 to-transparent;
+    @apply opacity-80;
+  }
+
+  .card-gcs {
+    @apply panel-gcs;
+    @apply transition-all duration-300;
+  }
+
+  .card-gcs:hover {
+    @apply border-cyan-500/40;
+    box-shadow: 0 8px 32px 0 rgba(0, 212, 255, 0.18);
+  }
+
+  .btn-gcs {
+    @apply relative inline-flex items-center justify-center gap-2;
+    @apply px-6 py-3 sm:px-8 sm:py-3.5;
+    @apply bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-500 hover:to-cyan-600;
+    @apply text-white font-semibold;
+    @apply rounded-lg;
+    @apply border border-cyan-400/40;
+    @apply shadow-[0_0_20px_rgba(0,212,255,0.35)];
+    @apply transition-all duration-200;
+    @apply active:scale-[0.98];
+    font-family: 'Exo 2', 'Inter', sans-serif;
+    letter-spacing: 0.02em;
+  }
+
+  .btn-gcs:hover {
+    box-shadow: 0 0 28px rgba(0, 212, 255, 0.5);
+    @apply border-cyan-300/50;
+  }
+
+  .btn-gcs-secondary {
+    @apply relative inline-flex items-center justify-center gap-2;
+    @apply px-5 py-2.5 sm:px-6 sm:py-3;
+    @apply bg-transparent;
+    @apply text-cyan-400 border border-cyan-500/50;
+    @apply rounded-lg font-medium;
+    @apply hover:bg-cyan-500/15 hover:border-cyan-400/60 hover:text-cyan-300;
+    @apply transition-all duration-200 active:scale-[0.98];
+    font-family: 'Exo 2', 'Inter', sans-serif;
+  }
+
+  .input-gcs {
+    @apply w-full rounded-lg px-4 py-3;
+    @apply bg-slate-800/80 border border-cyan-500/25;
+    @apply text-slate-100 placeholder-slate-500;
+    @apply focus:outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20;
+    @apply transition-colors duration-200;
+  }
+
+  .nav-gcs-active {
+    @apply bg-cyan-500/20 text-cyan-400 border border-cyan-500/40;
+  }
+
+  .nav-gcs-inactive {
+    @apply text-slate-300 hover:text-white hover:bg-white/5 border border-transparent;
+  }
+
+  /* ============================================
+     DJI-STYLE THEME (DJI Fly / DJI Go look)
+     Dark gray panels, DJI blue accent #0971CE
+     ============================================ */
+
+  .glass-dji {
+    @apply bg-slate-900/80 dark:bg-[rgba(17,24,39,0.92)];
+    @apply backdrop-blur-xl;
+    @apply border border-[rgba(9,113,206,0.25)];
+    @apply shadow-[0_8px_32px_0_rgba(9,113,206,0.12)];
+  }
+
+  .panel-dji {
+    @apply glass-dji rounded-xl overflow-hidden relative;
+    @apply border-t border-[rgba(9,113,206,0.4)];
+  }
+
+  .panel-dji::before {
+    content: '';
+    @apply absolute top-0 left-0 right-0 h-px;
+    background: linear-gradient(90deg, transparent, rgba(9, 113, 206, 0.6), transparent);
+    @apply opacity-90;
+  }
+
+  .card-dji {
+    @apply panel-dji;
+    @apply transition-all duration-300;
+  }
+
+  .card-dji:hover {
+    @apply border-[rgba(9,113,206,0.5)];
+    box-shadow: 0 8px 32px 0 rgba(9, 113, 206, 0.2);
+  }
+
+  .btn-dji {
+    @apply relative inline-flex items-center justify-center gap-2;
+    @apply px-6 py-3 sm:px-8 sm:py-3.5;
+    @apply text-white font-semibold;
+    @apply rounded-xl;
+    @apply border border-[rgba(9,113,206,0.5)];
+    @apply transition-all duration-200;
+    @apply active:scale-[0.98];
+    background: linear-gradient(180deg, #0d7ad1 0%, #0971CE 50%, #0760a8 100%);
+    box-shadow: 0 2px 12px rgba(9, 113, 206, 0.4);
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .btn-dji:hover {
+    background: linear-gradient(180deg, #1180e0 0%, #0d7ad1 50%, #0971CE 100%);
+    box-shadow: 0 4px 20px rgba(9, 113, 206, 0.5);
+    @apply border-[rgba(9,113,206,0.7)];
+  }
+
+  .btn-dji-secondary {
+    @apply relative inline-flex items-center justify-center gap-2;
+    @apply px-5 py-2.5 sm:px-6 sm:py-3;
+    @apply bg-transparent;
+    @apply rounded-xl font-medium;
+    @apply transition-all duration-200 active:scale-[0.98];
+    @apply border border-[rgba(9,113,206,0.5)];
+    @apply text-[#60a5fa];
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .btn-dji-secondary:hover {
+    @apply bg-[rgba(9,113,206,0.12)] border-[rgba(9,113,206,0.6)] text-[#93c5fd];
+  }
+
+  .input-dji {
+    @apply w-full rounded-xl px-4 py-3;
+    @apply bg-slate-800/90 border border-[rgba(9,113,206,0.25)];
+    @apply text-slate-100 placeholder-slate-500;
+    @apply focus:outline-none focus:border-[rgba(9,113,206,0.5)] focus:ring-2 focus:ring-[rgba(9,113,206,0.2)];
+    @apply transition-colors duration-200;
+  }
+
+  .nav-dji-active {
+    @apply rounded-lg;
+    background: rgba(9, 113, 206, 0.2);
+    @apply text-[#60a5fa];
+    border: 1px solid rgba(9, 113, 206, 0.4);
+  }
+
+  .nav-dji-inactive {
+    @apply text-slate-300 hover:text-white hover:bg-white/5 border border-transparent rounded-lg;
+  }
+
+  .text-gradient-dji {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #60a5fa 0%, #0971CE 50%, #0760a8 100%);
+  }
+
+  /* ============================================
+     MILITARY THEME - Tactical & Modern
+     ============================================ */
+  
+  /* Military glass effect - darker, more tactical */
+  .glass-military {
+    @apply bg-black/40;
+    @apply backdrop-blur-xl;
+    @apply border border-cyan-500/20;
+    @apply shadow-[0_8px_32px_0_rgba(0,212,255,0.15)];
+  }
+
+  .glass-military-strong {
+    @apply bg-black/60;
+    @apply backdrop-blur-2xl;
+    @apply border border-cyan-500/30;
+    @apply shadow-[0_12px_48px_0_rgba(0,212,255,0.25)];
+  }
+
+  /* Military card - tactical HUD style */
+  .card-military {
+    @apply glass-military;
+    @apply rounded-lg;
+    @apply border-t border-cyan-500/30;
+    @apply relative;
+    @apply overflow-hidden;
+  }
+
+  .card-military::before {
+    content: '';
+    @apply absolute top-0 left-0 right-0 h-px;
+    @apply bg-gradient-to-r from-transparent via-cyan-500 to-transparent;
+    @apply opacity-50;
+  }
+
+  /* Military button - tactical style */
+  .btn-military {
+    @apply relative;
+    @apply px-6 py-3;
+    @apply bg-gradient-to-r from-cyan-600/90 to-blue-600/90;
+    @apply text-white font-bold;
+    @apply uppercase tracking-wider text-sm;
+    @apply border border-cyan-400/50;
+    @apply rounded;
+    @apply shadow-[0_0_20px_rgba(0,212,255,0.4)];
+    @apply transition-all duration-300;
+    @apply transform hover:scale-105 active:scale-95;
+    @apply hover:shadow-[0_0_30px_rgba(0,212,255,0.6)];
+    @apply hover:border-cyan-300;
+    font-family: 'Orbitron', monospace;
+    letter-spacing: 0.1em;
+  }
+
+  .btn-military::after {
+    content: '';
+    @apply absolute inset-0;
+    @apply bg-gradient-to-r from-transparent via-white/10 to-transparent;
+    @apply opacity-0 transition-opacity duration-300;
+    @apply -translate-x-full;
+  }
+
+  .btn-military:hover::after {
+    @apply opacity-100 translate-x-full;
+    @apply transition-transform duration-700;
+  }
+
+  /* Military text gradient - tactical cyan/blue */
+  .text-gradient-military {
+    @apply bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-cyan-400 via-blue-400 to-cyan-300;
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  /* Military status indicators */
+  .status-military-online {
+    @apply inline-flex items-center gap-2;
+    @apply px-3 py-1.5;
+    @apply bg-cyan-500/20;
+    @apply border border-cyan-500/50;
+    @apply text-cyan-300;
+    @apply rounded;
+    @apply text-xs font-bold uppercase tracking-wider;
+    font-family: 'Orbitron', monospace;
+  }
+
+  .status-military-online::before {
+    content: '';
+    @apply w-2 h-2;
+    @apply bg-cyan-400;
+    @apply rounded-full;
+    @apply animate-pulse;
+    @apply shadow-[0_0_8px_rgba(0,212,255,0.8)];
+  }
+
+  /* Military grid background */
+  .bg-military-grid {
+    background-image: 
+      linear-gradient(rgba(0, 212, 255, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 212, 255, 0.1) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: 0 0, 0 0;
+  }
+
+  /* Military scan line effect */
+  .scan-line {
+    @apply absolute inset-0;
+    @apply bg-gradient-to-b from-transparent via-cyan-500/10 to-transparent;
+    @apply animate-scan;
+    pointer-events: none;
+  }
+
+  /* ============================================
+     WAYPOINT LABS / CIVILIAN THEME - Futuristic AI
+     ============================================ */
+
+  /* Waypoint Labs glass effect - holographic, sleek */
+  .glass-jarvis {
+    @apply bg-gradient-to-br from-emerald-500/10 via-cyan-500/5 to-blue-500/10;
+    @apply backdrop-blur-2xl;
+    @apply border border-emerald-400/20;
+    @apply shadow-[0_8px_32px_0_rgba(16,185,129,0.2),inset_0_1px_0_0_rgba(255,255,255,0.1)];
+  }
+
+  .glass-jarvis-strong {
+    @apply bg-gradient-to-br from-emerald-500/20 via-cyan-500/10 to-blue-500/20;
+    @apply backdrop-blur-3xl;
+    @apply border border-emerald-400/30;
+    @apply shadow-[0_12px_48px_0_rgba(16,185,129,0.3),inset_0_1px_0_0_rgba(255,255,255,0.15)];
+  }
+
+  /* Waypoint Labs card - holographic style */
+  .card-jarvis {
+    @apply glass-jarvis;
+    @apply rounded-2xl;
+    @apply relative;
+    @apply overflow-hidden;
+    @apply transition-all duration-500;
+  }
+
+  .card-jarvis::before {
+    content: '';
+    @apply absolute inset-0;
+    @apply bg-gradient-to-br from-emerald-500/0 via-cyan-500/5 to-blue-500/0;
+    @apply opacity-0 transition-opacity duration-500;
+  }
+
+  .card-jarvis:hover::before {
+    @apply opacity-100;
+  }
+
+  .card-jarvis::after {
+    content: '';
+    @apply absolute inset-0;
+    @apply bg-gradient-to-r from-transparent via-white/5 to-transparent;
+    @apply -translate-x-full;
+    @apply transition-transform duration-1000;
+  }
+
+  .card-jarvis:hover::after {
+    @apply translate-x-full;
+  }
+
+  /* Waypoint Labs button - futuristic AI style */
+  .btn-jarvis {
+    @apply relative;
+    @apply px-8 py-4;
+    @apply bg-gradient-to-r from-emerald-500 via-cyan-500 to-blue-500;
+    @apply text-white font-semibold;
+    @apply rounded-xl;
+    @apply shadow-[0_0_30px_rgba(16,185,129,0.5),inset_0_1px_0_0_rgba(255,255,255,0.2)];
+    @apply transition-all duration-300;
+    @apply transform hover:scale-105 active:scale-95;
+    @apply hover:shadow-[0_0_40px_rgba(16,185,129,0.7),inset_0_1px_0_0_rgba(255,255,255,0.3)];
+    @apply overflow-hidden;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  .btn-jarvis::before {
+    content: '';
+    @apply absolute inset-0;
+    @apply bg-gradient-to-r from-white/0 via-white/30 to-white/0;
+    @apply opacity-0 transition-opacity duration-500;
+    @apply -translate-x-full;
+  }
+
+  .btn-jarvis:hover::before {
+    @apply opacity-100 translate-x-full;
+    @apply transition-transform duration-700;
+  }
+
+  /* Waypoint Labs text gradient - AI holographic */
+  .text-gradient-jarvis {
+    @apply bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-emerald-400 via-cyan-300 to-blue-400;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+  }
+
+  /* Waypoint Labs status indicators */
+  .status-jarvis-online {
+    @apply inline-flex items-center gap-2;
+    @apply px-4 py-2;
+    @apply bg-emerald-500/20;
+    @apply border border-emerald-400/40;
+    @apply text-emerald-300;
+    @apply rounded-xl;
+    @apply text-sm font-semibold;
+    @apply shadow-[0_0_15px_rgba(16,185,129,0.3)];
+    font-family: 'Rajdhani', sans-serif;
+  }
+
+  .status-jarvis-online::before {
+    content: '';
+    @apply w-2.5 h-2.5;
+    @apply bg-emerald-400;
+    @apply rounded-full;
+    @apply animate-pulse;
+    @apply shadow-[0_0_10px_rgba(16,185,129,0.8)];
+  }
+
+  /* Waypoint Labs holographic background */
+  .bg-jarvis-hologram {
+    background: 
+      radial-gradient(circle at 20% 50%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+    background-size: 200% 200%;
+    animation: jarvis-bg-shift 20s ease infinite;
+  }
+
+  /* Waypoint Labs particle effect */
+  .jarvis-particles {
+    @apply absolute inset-0;
+    @apply opacity-30;
+    background-image: 
+      radial-gradient(2px 2px at 20% 30%, rgba(16, 185, 129, 0.8), transparent),
+      radial-gradient(2px 2px at 60% 70%, rgba(6, 182, 212, 0.8), transparent),
+      radial-gradient(1px 1px at 50% 50%, rgba(59, 130, 246, 0.8), transparent),
+      radial-gradient(1px 1px at 80% 10%, rgba(16, 185, 129, 0.6), transparent),
+      radial-gradient(2px 2px at 90% 40%, rgba(6, 182, 212, 0.6), transparent),
+      radial-gradient(1px 1px at 33% 60%, rgba(59, 130, 246, 0.6), transparent),
+      radial-gradient(1px 1px at 70% 90%, rgba(16, 185, 129, 0.4), transparent);
+    background-size: 200% 200%;
+    animation: jarvis-particles 30s linear infinite;
+    pointer-events: none;
+  }
+
+  /* Waypoint Labs AI voice indicator */
+  .jarvis-voice-active {
+    @apply relative;
+  }
+
+  .jarvis-voice-active::after {
+    content: '';
+    @apply absolute -inset-1;
+    @apply bg-gradient-to-r from-emerald-500 via-cyan-500 to-blue-500;
+    @apply rounded-xl;
+    @apply opacity-50;
+    @apply blur-sm;
+    @apply animate-pulse;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Animations */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in-down {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes pulse-slow {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out;
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.4s ease-out;
+  }
+
+  .animate-fade-in-down {
+    animation: fade-in-down 0.4s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scale-in 0.3s ease-out;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse-slow 3s ease-in-out infinite;
+  }
+
+  /* Shadow utilities */
+  .shadow-glass {
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  }
+
+  .shadow-glass-lg {
+    box-shadow: 0 12px 48px 0 rgba(31, 38, 135, 0.5);
+  }
+
+  .shadow-glow-blue {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+  }
+
+  .shadow-glow-green {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+  }
+
+  .shadow-glow-military {
+    box-shadow: 0 0 25px rgba(0, 212, 255, 0.6), inset 0 0 15px rgba(0, 212, 255, 0.2);
+  }
+
+  .shadow-glow-jarvis {
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.5), 0 0 60px rgba(6, 182, 212, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.1);
+  }
+
+  /* Military animations */
+  @keyframes scan {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(100%);
+    }
+  }
+
+  @keyframes tactical-pulse {
+    0%, 100% {
+      opacity: 1;
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+    }
+    50% {
+      opacity: 0.7;
+      box-shadow: 0 0 30px rgba(0, 212, 255, 0.8);
+    }
+  }
+
+  @keyframes military-glow {
+    0%, 100% {
+      text-shadow: 0 0 10px rgba(0, 212, 255, 0.5), 0 0 20px rgba(0, 212, 255, 0.3);
+    }
+    50% {
+      text-shadow: 0 0 15px rgba(0, 212, 255, 0.8), 0 0 30px rgba(0, 212, 255, 0.5);
+    }
+  }
+
+  /* Waypoint Labs animations */
+  @keyframes jarvis-bg-shift {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  @keyframes jarvis-particles {
+    0% {
+      background-position: 0% 0%;
+    }
+    100% {
+      background-position: 100% 100%;
+    }
+  }
+
+  @keyframes jarvis-glow {
+    0%, 100% {
+      opacity: 1;
+      filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.5));
+    }
+    50% {
+      opacity: 0.8;
+      filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.8));
+    }
+  }
+
+  @keyframes jarvis-shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  @keyframes hologram-flicker {
+    0%, 100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    50% {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+  }
+
+  .animate-scan {
+    animation: scan 3s linear infinite;
+  }
+
+  .animate-tactical-pulse {
+    animation: tactical-pulse 2s ease-in-out infinite;
+  }
+
+  .animate-military-glow {
+    animation: military-glow 2s ease-in-out infinite;
+  }
+
+  .animate-jarvis-glow {
+    animation: jarvis-glow 2s ease-in-out infinite;
+  }
+
+  .animate-jarvis-shimmer {
+    animation: jarvis-shimmer 3s linear infinite;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+    background-size: 1000px 100%;
+  }
+
+  .animate-hologram-flicker {
+    animation: hologram-flicker 0.15s ease-in-out infinite;
+  }
+
+  /* Premium Liquid Glass Animations */
+  @keyframes gradient-shift {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  @keyframes liquid-glass {
+    0%, 100% {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: translateY(-10px) scale(1.02);
+      opacity: 0.95;
+    }
+  }
+
+  @keyframes shimmer-sweep {
+    0% {
+      transform: translateX(-100%) translateY(-100%) rotate(45deg);
+    }
+    100% {
+      transform: translateX(200%) translateY(200%) rotate(45deg);
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+    }
+    50% {
+      box-shadow: 0 0 40px rgba(59, 130, 246, 0.8), 0 0 60px rgba(59, 130, 246, 0.4);
+    }
+  }
+
+  .animate-liquid-glass {
+    animation: liquid-glass 4s ease-in-out infinite;
+  }
+
+  .animate-shimmer-sweep {
+    animation: shimmer-sweep 3s linear infinite;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  /* Premium Glass Reflection Effect */
+  .glass-reflection {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .glass-reflection::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      45deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 70%
+    );
+    transform: rotate(45deg);
+    animation: shimmer-sweep 4s linear infinite;
+    pointer-events: none;
+  }
+
+  /* Enhanced readability utilities */
+  .text-readable {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "kern" 1, "liga" 1;
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Modern spacing utilities for drone app */
+  .spacing-safe {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Prevent text overflow */
+  .text-overflow-safe {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+
+  /* Safe touch targets for mobile */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .text-sharp {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+  
+  /* Prevent pixel errors and ensure crisp text */
+  .no-pixel-errors {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  
+  /* Ensure icons and emojis render clearly */
+  .icon-crisp, [class*="text-"] {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* High contrast text for military */
+  .text-military-high-contrast {
+    @apply text-cyan-100;
+    text-shadow: 
+      0 0 5px rgba(0, 212, 255, 0.5),
+      0 1px 2px rgba(0, 0, 0, 0.9),
+      0 2px 4px rgba(0, 0, 0, 0.7),
+      0 0 1px rgba(0, 0, 0, 0.5);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  /* High contrast text for Waypoint Labs theme */
+  .text-jarvis-high-contrast {
+    @apply text-emerald-100;
+    text-shadow: 
+      0 0 8px rgba(16, 185, 129, 0.6),
+      0 1px 2px rgba(0, 0, 0, 0.9),
+      0 2px 4px rgba(0, 0, 0, 0.7),
+      0 0 1px rgba(0, 0, 0, 0.5);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+  
+  /* Ensure all cards have proper contrast */
+  .card-military, .card-jarvis, .glass-military, .glass-jarvis {
+    @apply no-pixel-errors;
+  }
+  
+  /* Ensure buttons are readable */
+  .btn-military, .btn-jarvis {
+    @apply no-pixel-errors;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  /* Modern drone app container spacing */
+  .container-safe {
+    @apply px-4 sm:px-6 lg:px-8;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Layout: consistent dashboard spacing so content fits and matches across pages */
+  .layout-dashboard {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    @apply flex flex-col gap-4 sm:gap-6;
+  }
+
+  .layout-panel {
+    @apply p-4 sm:p-5 lg:p-6;
+  }
+
+  /* Text on dark backgrounds: ensure fonts are visible (no low-contrast slate-400 on panels) */
+  .text-on-dark {
+    @apply text-slate-100;
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.4);
+  }
+
+  .text-on-dark-muted {
+    @apply text-slate-300;
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
+  }
+
+  .text-on-dark-strong {
+    @apply text-white font-medium;
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Prevent element overlap */
+  .no-overlap {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Safe floating element positioning */
+  .floating-safe {
+    position: fixed;
+    z-index: 40;
+    margin: 1rem;
+  }
+
+  /* Responsive text sizing */
+  .text-responsive {
+    font-size: clamp(0.875rem, 2vw, 1rem);
+  }
+
+  .text-responsive-lg {
+    font-size: clamp(1.125rem, 3vw, 1.5rem);
+  }
+
+  .text-responsive-xl {
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+  }
+
+  /* Grid gap utilities */
+  .gap-responsive {
+    gap: clamp(0.5rem, 2vw, 1.5rem);
+  }
+
+  /* Card padding responsive */
+  .card-padding {
+    padding: clamp(1rem, 3vw, 2rem);
+  }
+}

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Waypoint Labs – Functions, Features & Integration Report</title>
+  <style>
+    body { font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.5; color: #1a1a1a; max-width: 800px; margin: 0 auto; padding: 40px; }
+    h1 { font-size: 1.75rem; border-bottom: 2px solid #2563eb; padding-bottom: 8px; margin-top: 0; }
+    h2 { font-size: 1.25rem; margin-top: 28px; color: #1e40af; }
+    h3 { font-size: 1.05rem; margin-top: 18px; }
+    p { margin: 0.5em 0 1em; }
+    ul, ol { margin: 0.5em 0 1em; padding-left: 1.5em; }
+    li { margin: 0.25em 0; }
+    table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.9rem; }
+    th, td { border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; }
+    th { background: #f1f5f9; font-weight: 600; }
+    .meta { color: #64748b; font-size: 0.9rem; margin-bottom: 24px; }
+    @media print { body { padding: 20px; } h1 { break-after: avoid; } h2, h3 { break-after: avoid; } table { break-inside: avoid; } }
+  </style>
+</head>
+<body>
+
+  <p class="meta">Waypoint Labs – Functions, Features &amp; Integration Report | Generated February 2025</p>
+
+  <h1>Waypoint Labs – Functions, Features &amp; Integration Report</h1>
+
+  <p>This report documents all functions and features of the Waypoint Labs drone control application and describes how they can be incorporated into other jobs and workflows.</p>
+
+  <h2>1. Executive Summary</h2>
+  <p>Waypoint Labs is an AI-powered civilian drone operations platform. It provides role-based dashboards (Civilian, Pilot, Admin), multi-mode operations (Cattle, Hunting, People, Filming, Fishing), live video with AI interaction, route planning, and an SDK-ready API. The stack includes a Next.js frontend, optional FastAPI Python backend, and reusable Python modules for AI advice, route planning, detection, and analytics.</p>
+
+  <h2>2. Core Functions &amp; Features</h2>
+
+  <h3>2.1 Application Structure</h3>
+  <ul>
+    <li><strong>Frontend:</strong> Next.js 14 (React), TypeScript, Tailwind CSS. Pages: home, sign-in, select-role, civilian, pilot, admin.</li>
+    <li><strong>Backend:</strong> Optional FastAPI server (<code>src/ground_control_station/server.py</code>) on port 8000; CORS configurable for ngrok/production.</li>
+    <li><strong>Auth:</strong> Demo login (no Clerk); role selection (Civilian, Pilot, Admin) with validation.</li>
+    <li><strong>Deployment:</strong> Ngrok script for tunneling (port 3001), Fly.io/Docker documented.</li>
+  </ul>
+
+  <h3>2.2 Roles &amp; Dashboards</h3>
+  <table>
+    <tr><th>Role</th><th>Features</th></tr>
+    <tr><td>Civilian</td><td>Mode selector (Cattle, Hunting, People, Filming, Fishing); Plan / Chat / Manual / Autonomous / Monitoring / Advanced tabs; Live Drone Feed panel; AI Chat; route planning; analytics; fish detection; multi-drone video.</td></tr>
+    <tr><td>Pilot</td><td>Control, Mission, Monitoring, Advanced; video sidebar; manual control; mission view; AI and LLM command interfaces.</td></tr>
+    <tr><td>Admin</td><td>System config, user management, audit logs, performance monitor, security settings.</td></tr>
+  </table>
+
+  <h3>2.3 Operational Modes</h3>
+  <table>
+    <tr><th>Mode</th><th>Functions</th></tr>
+    <tr><td>Cattle</td><td>Mustering routes, herd tracking, AI mustering advice, livestock-oriented analytics.</td></tr>
+    <tr><td>Hunting</td><td>Animal detection, size/weight estimation, hunting routes, AI hunting advice, compliance.</td></tr>
+    <tr><td>People</td><td>People recognition, face recognition (backend), search &amp; rescue workflows.</td></tr>
+    <tr><td>Filming</td><td>Filming routes, subject tracking, AI filming advice (wedding, advertisement, event), multi-drone video.</td></tr>
+    <tr><td>Fishing</td><td>Fish detection panel, fishing scout, fishing analytics dashboard, fishing route planning.</td></tr>
+  </table>
+
+  <h3>2.4 Frontend Components (Key)</h3>
+  <ul>
+    <li><strong>MultiDroneVideoManager</strong> – Add/remove drones, grid/split/focus layouts, per-drone settings.</li>
+    <li><strong>ResizableVideoPlayer</strong> – Live stream display; WebSocket video feed.</li>
+    <li><strong>AIChatInterface</strong> – Mission planning and advice in natural language.</li>
+    <li><strong>LLMCommandInterface</strong> – Natural-language drone commands.</li>
+    <li><strong>AIDroneCommandInterface</strong> – AI-driven command interface.</li>
+    <li><strong>CesiumMissionView</strong> – 3D mission and waypoint visualization.</li>
+    <li><strong>ManualControlPanel</strong> – Manual flight controls.</li>
+    <li><strong>AutonomousModeSelector</strong> – Autonomous mission patterns.</li>
+    <li><strong>AnalyticsDashboard</strong> – Operations analytics.</li>
+    <li><strong>FishingAnalyticsDashboard</strong> – Fishing-specific analytics.</li>
+    <li><strong>FishDetectionPanel</strong> – Fish detection UI.</li>
+    <li><strong>VoiceControl, GestureControl, VRMissionControl, MultiScreenControl</strong> – Alternative input and display.</li>
+    <li><strong>MissionPatternGenerator, MissionTemplates, OfflineMissionManager</strong> – Mission design and offline use.</li>
+    <li><strong>AirspaceChecker, RemoteIDManager, FailsafeManager, ComplianceDashboard</strong> – Safety and compliance.</li>
+    <li><strong>ConstructionProgressTracker, InspectionWorkflow, PhotogrammetryPanel, VolumetricTool</strong> – Inspection and mapping.</li>
+    <li><strong>ROIDashboard, SARDashboard</strong> – ROI and search-and-rescue.</li>
+    <li><strong>Admin:</strong> AdminDashboard, UserManagement, AuditLogs, PerformanceMonitor, SecuritySettings, SystemConfig.</li>
+  </ul>
+
+  <h3>2.5 Backend API (FastAPI)</h3>
+  <ul>
+    <li><strong>Health:</strong> <code>GET /api/status</code> – running, authenticated, connections, version.</li>
+    <li><strong>Admin:</strong> <code>/api/admin/metrics</code>, <code>/api/admin/performance</code>, <code>/api/admin/security</code>, <code>/api/admin/config</code>, <code>/api/admin/audit-logs</code>, <code>/api/admin/users</code> (and user role/status/delete).</li>
+    <li><strong>Fleet:</strong> <code>/api/fleet/drones</code>, <code>/api/fleet/health</code>.</li>
+    <li><strong>Advanced:</strong> <code>/api/advanced/features/summary</code>, anti-jamming, anti-tracking, auto-evade, track-correction, multi-drone, ai-engine status.</li>
+    <li><strong>Civilian detection:</strong> <code>POST /api/civilian/detect</code>, <code>/api/civilian/camera/add</code>, <code>/api/civilian/analyze</code>.</li>
+    <li><strong>AI advice:</strong> <code>POST /api/civilian/ai/filming-advice</code>, <code>mustering-advice</code>, <code>hunting-advice</code>, <code>general-advice</code>, <code>/api/civilian/ai/chat</code>.</li>
+    <li><strong>Route planning:</strong> <code>POST /api/civilian/route/plan</code>, <code>plan-filming</code>, <code>plan-mustering</code>, <code>plan-hunting</code>, <code>plan-fishing</code>, <code>execute</code>, <code>execute-ai</code>, <code>recommend</code>, <code>cleanup</code>.</li>
+    <li><strong>Fishing:</strong> <code>POST /api/civilian/fishing/start-scout</code>, <code>detect-fish</code>.</li>
+    <li><strong>Tracking:</strong> <code>GET /api/civilian/tracking/status</code>, <code>POST /api/civilian/tracking/advice</code>.</li>
+    <li><strong>Drone commands:</strong> <code>POST /api/civilian/drone/command</code>, <code>ai-command</code>, <code>execute-coordination</code>.</li>
+    <li><strong>SDK-ready:</strong> <code>POST /api/sdk/command</code> (takeoff, land, rtl, arm, disarm, goto, etc.), <code>POST /api/sdk/waypoints</code>, <code>GET /api/sdk/telemetry</code>, <code>GET /api/sdk/drones</code>.</li>
+    <li><strong>WebSocket:</strong> <code>/ws</code> – real-time updates; can be extended for video/detections.</li>
+  </ul>
+
+  <h3>2.6 Python Modules (Civilian)</h3>
+  <table>
+    <tr><th>Module</th><th>Functions</th></tr>
+    <tr><td>CivilianAIAdvisor</td><td>Filming advice (wedding, advertisement, event), mustering advice, hunting advice, general advice; optional Claude integration.</td></tr>
+    <tr><td>CivilianRoutePlanner</td><td>Plan filming, mustering, hunting, general routes; waypoints, distance, duration, safety score.</td></tr>
+    <tr><td>ClaudeIntegration</td><td>Anthropic Claude API for expert advice and chat.</td></tr>
+    <tr><td>AnimalDetector</td><td>YOLO-based animal/person detection; face recognition optional; hunting animal classes.</td></tr>
+    <tr><td>CameraManager</td><td>Camera source management for capture and streaming.</td></tr>
+    <tr><td>FilmingTracker</td><td>Subject tracking during filming; real-time framing/movement/lighting advice.</td></tr>
+    <tr><td>SizeEstimator</td><td>Estimate animal size and weight from bounding box and type (cow, horse, deer, etc.).</td></tr>
+    <tr><td>PrecisionAgriculture</td><td>Crop health, irrigation optimization, pest detection, yield prediction (framework).</td></tr>
+    <tr><td>ConservationMode</td><td>Population monitoring, health assessment, migration tracking, poaching detection (framework).</td></tr>
+    <tr><td>advanced_mustering</td><td>Advanced mustering logic.</td></tr>
+  </table>
+
+  <h3>2.7 Supported Protocols &amp; Integration</h3>
+  <p>The app is designed to support many drone protocols and connection types. Documented supported protocols include MAVLink, PX4, ArduPilot, Betaflight, DJI (SDK, Tello, Mini, Air, FPV), Parrot (ARSDK), Skydio, Yuneec, Autel, and others; connection types include Serial, UDP, TCP, USB, WiFi, Bluetooth, WebRTC, RTSP, RTMP. Actual hardware connection is implemented in the Python backend (e.g. MAVLink/DroneKit); the UI supports protocol selection and connection parameters.</p>
+
+  <h2>3. How Features Can Be Incorporated Into Other Jobs</h2>
+
+  <h3>3.1 Agriculture &amp; Land Management</h3>
+  <ul>
+    <li><strong>Use:</strong> Precision agriculture module (crop health, irrigation, pests), cattle mustering routes and AI advice, general surveying routes.</li>
+    <li><strong>Integration:</strong> Point backend at field boundaries and sensor data; use SDK waypoints for automated survey grids; add custom analytics dashboards that consume the same API.</li>
+    <li><strong>Other jobs:</strong> Crop scouting, irrigation planning, livestock head counts, pasture monitoring, yield estimation.</li>
+  </ul>
+
+  <h3>3.2 Wildlife &amp; Conservation</h3>
+  <ul>
+    <li><strong>Use:</strong> Conservation mode (population, health, migration), animal detector and size estimator, hunting routes repurposed for non-invasive surveying.</li>
+    <li><strong>Integration:</strong> Feed detection API into existing conservation platforms; use route planning for transect surveys; optional poaching-detection alerts.</li>
+    <li><strong>Other jobs:</strong> Species counts, habitat mapping, anti-poaching patrols, research data collection.</li>
+  </ul>
+
+  <h3>3.3 Media &amp; Events</h3>
+  <ul>
+    <li><strong>Use:</strong> Filming routes and AI filming advice, filming tracker, multi-drone video manager.</li>
+    <li><strong>Integration:</strong> Trigger routes from event timelines; send live feed to broadcast systems via WebSocket or RTMP; use AI chat for shot suggestions.</li>
+    <li><strong>Other jobs:</strong> Sports coverage, concerts, weddings, advertisements, real estate.</li>
+  </ul>
+
+  <h3>3.4 Fishing &amp; Marine</h3>
+  <ul>
+    <li><strong>Use:</strong> Fish detection panel, fishing analytics dashboard, fishing scout and route planning.</li>
+    <li><strong>Integration:</strong> Connect to vessel or dock-based systems; use SDK for autonomous scout patterns; feed detections into stock assessment tools.</li>
+    <li><strong>Other jobs:</strong> Fish stock surveys, illegal fishing monitoring, aquaculture site inspection.</li>
+  </ul>
+
+  <h3>3.5 Inspection &amp; Infrastructure</h3>
+  <ul>
+    <li><strong>Use:</strong> Inspection workflow, construction progress tracker, photogrammetry and volumetric tools, mission templates.</li>
+    <li><strong>Integration:</strong> Use same SDK commands and waypoints for repeatable inspection routes; export maps/volumes to BIM or GIS.</li>
+    <li><strong>Other jobs:</strong> Solar farms, wind turbines, bridges, pipelines, buildings, roofs.</li>
+  </ul>
+
+  <h3>3.6 Search &amp; Rescue / Emergency</h3>
+  <ul>
+    <li><strong>Use:</strong> People recognition and SAR dashboard, general and custom route planning, AI chat for rapid mission advice.</li>
+    <li><strong>Integration:</strong> Ingest alerts from emergency dispatch; use SDK to command drones from existing incident software; stream to command centers.</li>
+    <li><strong>Other jobs:</strong> Missing persons, disaster assessment, fire perimeter mapping, flood surveys.</li>
+  </ul>
+
+  <h3>3.7 Security &amp; Monitoring</h3>
+  <ul>
+    <li><strong>Use:</strong> People recognition, audit logs, security settings, multi-drone video and monitoring tab.</li>
+    <li><strong>Integration:</strong> Integrate with access control or VMS; use admin API for user/role management and audit export.</li>
+    <li><strong>Other jobs:</strong> Site patrols, perimeter monitoring, crowd monitoring (with appropriate governance).</li>
+  </ul>
+
+  <h3>3.8 Generic Integration Patterns</h3>
+  <ul>
+    <li><strong>API-first:</strong> All capabilities are exposed via REST (and WebSocket). Any external system can call the same endpoints (with CORS/auth as configured).</li>
+    <li><strong>SDK commands:</strong> <code>/api/sdk/command</code> and <code>/api/sdk/waypoints</code> can be wired to MAVLink/DroneKit or other SDKs so that third-party job schedulers or scripts send takeoff, waypoints, land, etc.</li>
+    <li><strong>Reusable modules:</strong> Python modules (AI advisor, route planner, animal detector, size estimator, filming tracker, etc.) can be imported into other Python services or scripts for batch analysis, custom pipelines, or headless automation.</li>
+    <li><strong>White-label:</strong> Frontend can be rebranded; roles and modes can be extended (e.g. add “Custom” mode) and new tabs can call the same backend.</li>
+  </ul>
+
+  <h2>4. Summary Table – Feature to Job Mapping</h2>
+  <table>
+    <tr><th>Feature area</th><th>Relevant jobs</th></tr>
+    <tr><td>AI advice (filming, mustering, hunting, general)</td><td>Media, agriculture, wildlife, SAR, any guided operation</td></tr>
+    <tr><td>Route planning (filming, mustering, hunting, fishing, general)</td><td>Agriculture, conservation, filming, fishing, inspection, SAR</td></tr>
+    <tr><td>Animal/person detection &amp; size estimation</td><td>Wildlife, livestock, hunting, conservation, SAR</td></tr>
+    <tr><td>Multi-drone video &amp; live feed</td><td>Events, security, inspection, broadcast</td></tr>
+    <tr><td>Fish detection &amp; fishing analytics</td><td>Fishing, marine, aquaculture</td></tr>
+    <tr><td>Precision agriculture (crop, irrigation, pests)</td><td>Farming, agronomy, irrigation management</td></tr>
+    <tr><td>Conservation (population, poaching)</td><td>Conservation, research, anti-poaching</td></tr>
+    <tr><td>Inspection &amp; photogrammetry</td><td>Infrastructure, construction, utilities</td></tr>
+    <tr><td>SDK command/waypoint API</td><td>Any automation, fleet orchestration, external GCS</td></tr>
+    <tr><td>Admin &amp; audit</td><td>Enterprise, compliance, multi-tenant deployments</td></tr>
+  </table>
+
+  <h2>5. Conclusion</h2>
+  <p>Waypoint Labs provides a full set of functions and features for civilian drone operations: role-based UIs, multiple operational modes, AI-driven advice and route planning, detection and analytics, and an SDK-ready API. These can be incorporated into other jobs by (1) using the existing REST and WebSocket APIs from external systems, (2) wiring the SDK endpoints to real drone stacks, (3) reusing the Python modules in custom pipelines, and (4) extending the frontend with new modes or tabs that call the same backend. The report above maps each feature area to example job categories and integration patterns.</p>
+
+  <p class="meta">End of report. Waypoint Labs.</p>
+
+</body>
+</html>

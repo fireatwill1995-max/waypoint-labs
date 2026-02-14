@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Waypoint Labs – Mining Operations in Australia</title>
+  <style>
+    body { font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.5; color: #1a1a1a; max-width: 800px; margin: 0 auto; padding: 40px; }
+    h1 { font-size: 1.75rem; border-bottom: 2px solid #2563eb; padding-bottom: 8px; margin-top: 0; }
+    h2 { font-size: 1.25rem; margin-top: 28px; color: #1e40af; }
+    h3 { font-size: 1.05rem; margin-top: 18px; }
+    p { margin: 0.5em 0 1em; }
+    ul { margin: 0.5em 0 1em; padding-left: 1.5em; }
+    li { margin: 0.25em 0; }
+    table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.9rem; }
+    th, td { border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; }
+    th { background: #f1f5f9; font-weight: 600; }
+    .meta { color: #64748b; font-size: 0.9rem; margin-bottom: 24px; }
+    @media print { body { padding: 20px; } h1 { break-after: avoid; } h2, h3 { break-after: avoid; } table { break-inside: avoid; } }
+  </style>
+</head>
+<body>
+
+  <p class="meta">Waypoint Labs – Mining Operations in Australia | February 2025</p>
+
+  <h1>How Waypoint Labs Could Be Used in Mining Operations in Australia</h1>
+
+  <p>This document maps existing Waypoint Labs features to mining use cases in Australia and suggests integration patterns.</p>
+
+  <h2>1. Surveying &amp; Volumetric Measurement</h2>
+  <ul>
+    <li><strong>Use:</strong> General and custom <strong>route planning</strong> for systematic pit, stockpile, dump and rehab surveys; <strong>VolumetricTool</strong> and <strong>PhotogrammetryPanel</strong> for volume and terrain.</li>
+    <li><strong>Australia:</strong> Regular pit surveys, stockpile volumes (ROM, product, overburden), tailings dam surveys, rehabilitation progress. Fly repeat grids; export to mine planning / GIS.</li>
+    <li><strong>Integration:</strong> Point <strong>SDK waypoints</strong> at your survey grid; feed volumes into mine software (e.g. Deswik, Vulcan, Surpac) or GIS.</li>
+  </ul>
+
+  <h2>2. Infrastructure &amp; Equipment Inspection</h2>
+  <ul>
+    <li><strong>Use:</strong> <strong>InspectionWorkflow</strong>, <strong>MissionTemplates</strong>, <strong>ConstructionProgressTracker</strong>-style repeat missions; <strong>ManualControlPanel</strong> and <strong>CesiumMissionView</strong> for close-up and 3D context.</li>
+    <li><strong>Australia:</strong> Conveyors, crushers, stackers, reclaimers, highwalls, haul roads, berms, drainage, camp and workshop buildings.</li>
+    <li><strong>Integration:</strong> Define inspection waypoints once; run via <strong>SDK command/waypoints</strong> on a schedule; send images/video to asset or CMMS systems.</li>
+  </ul>
+
+  <h2>3. Safety, Exclusion Zones &amp; People/Vehicle Awareness</h2>
+  <ul>
+    <li><strong>Use:</strong> <strong>People recognition</strong> and <strong>animal/person detection</strong>; <strong>AirspaceChecker</strong>, <strong>ComplianceDashboard</strong>, <strong>FailsafeManager</strong> for rules and geofencing.</li>
+    <li><strong>Australia:</strong> Blast exclusion zones, haul road crossings, PPE/vehicle-in-pit checks, “man down” or vehicle-in-danger awareness near equipment.</li>
+    <li><strong>Integration:</strong> Use detection API and WebSocket for real-time alerts; tie <strong>route planning</strong> to “no-fly” or “caution” zones that align with CASA and site safety rules.</li>
+  </ul>
+
+  <h2>4. Environmental &amp; Rehabilitation (Australian Focus)</h2>
+  <ul>
+    <li><strong>Use:</strong> <strong>ConservationMode</strong> (population/health), <strong>AnimalDetector</strong>, <strong>PrecisionAgriculture</strong>-style analysis (vegetation/health), <strong>AnalyticsDashboard</strong> for trends.</li>
+    <li><strong>Australia:</strong> Fauna monitoring (e.g. before/after blasting, near rehab), erosion and vegetation cover, water and sediment, compliance with environmental conditions and closure criteria.</li>
+    <li><strong>Integration:</strong> Run <strong>general route planning</strong> over set transects or rehab areas; feed detections and simple indices into environmental reporting tools.</li>
+  </ul>
+
+  <h2>5. Dust, Emissions &amp; Visual Monitoring</h2>
+  <ul>
+    <li><strong>Use:</strong> <strong>Multi-drone video</strong> and <strong>live feed</strong> for visual monitoring; <strong>AnalyticsDashboard</strong> for time-based views; optional custom analytics on camera feeds.</li>
+    <li><strong>Australia:</strong> Dust from haul roads, crushers, stockpiles; visible emissions; community and regulator visibility.</li>
+    <li><strong>Integration:</strong> Stream from <strong>MultiDroneVideoManager</strong> to recording or monitoring platforms; use <strong>AI chat</strong> for “where is dust worst today?” once you add simple dust/visibility logic.</li>
+  </ul>
+
+  <h2>6. Remote &amp; Offline (Regional Australia)</h2>
+  <ul>
+    <li><strong>Use:</strong> <strong>OfflineMissionManager</strong>, <strong>MissionTemplates</strong>, autonomous <strong>route execution</strong>; <strong>SDK command/waypoints</strong> for pre-planned missions.</li>
+    <li><strong>Australia:</strong> Poor or no connectivity at pit, exploration, or rehab sites; FIFO rosters with pre-loaded missions.</li>
+    <li><strong>Integration:</strong> Plan missions in office or camp; sync to tablet/laptop; run missions offline and upload data when back in range.</li>
+  </ul>
+
+  <h2>7. Regulatory (CASA, Remote ID, Airspace)</h2>
+  <ul>
+    <li><strong>Use:</strong> <strong>AirspaceChecker</strong>, <strong>RemoteIDManager</strong>, <strong>ComplianceDashboard</strong>, <strong>FailsafeManager</strong>.</li>
+    <li><strong>Australia:</strong> CASA Part 101 (and future rules), Remote ID, controlled airspace near ports/airfields, mine airspace coordination.</li>
+    <li><strong>Integration:</strong> Extend <strong>AirspaceChecker</strong> with Australian airspace data (e.g. CASA/airservices); use <strong>RemoteIDManager</strong> and compliance views for audits and approvals.</li>
+  </ul>
+
+  <h2>8. Incident Response &amp; Emergency</h2>
+  <ul>
+    <li><strong>Use:</strong> <strong>SAR-style</strong> use of people detection, <strong>general route planning</strong>, <strong>AI chat</strong> for “quickest safe route to X”, <strong>multi-drone video</strong> for command centre.</li>
+    <li><strong>Australia:</strong> Search after blast, vehicle rollover, medical emergency in pit, bushfire or flood impact on site.</li>
+    <li><strong>Integration:</strong> One-click “incident route” templates; stream from <strong>MultiDroneVideoManager</strong> to site emergency or control room.</li>
+  </ul>
+
+  <h2>Summary Table – Mining Use vs App Features</h2>
+  <table>
+    <tr><th>Mining need</th><th>App features to use</th><th>Notes</th></tr>
+    <tr><td>Pit/stockpile survey</td><td>Route planning, VolumetricTool, PhotogrammetryPanel, SDK waypoints</td><td>Repeat grids; export to mine/GIS</td></tr>
+    <tr><td>Infrastructure inspection</td><td>InspectionWorkflow, MissionTemplates, CesiumMissionView</td><td>Scheduled, repeatable missions</td></tr>
+    <tr><td>Safety &amp; exclusion</td><td>People/vehicle detection, AirspaceChecker, FailsafeManager, Compliance</td><td>Blast zones, CASA, site rules</td></tr>
+    <tr><td>Environmental/rehab</td><td>ConservationMode, AnimalDetector, AnalyticsDashboard, general routes</td><td>Fauna, vegetation, erosion</td></tr>
+    <tr><td>Dust/visual monitoring</td><td>MultiDroneVideoManager, live feed, Analytics</td><td>Streaming, recording</td></tr>
+    <tr><td>Remote sites</td><td>OfflineMissionManager, MissionTemplates, SDK</td><td>Low connectivity, FIFO</td></tr>
+    <tr><td>CASA &amp; Remote ID</td><td>RemoteIDManager, AirspaceChecker, ComplianceDashboard</td><td>Australian regulatory fit</td></tr>
+    <tr><td>Incident response</td><td>People detection, route planning, AI chat, multi-drone video</td><td>Fast deployment, streaming</td></tr>
+  </table>
+
+  <h2>Practical Next Steps for Australian Mining</h2>
+  <ol>
+    <li><strong>Add a “Mining” mode</strong> to the Civilian app that defaults to survey grids, inspection templates, and Australian airspace/compliance.</li>
+    <li><strong>Wire SDK commands</strong> to your preferred drone stack (MAVLink/DroneKit or vendor SDK) and test in a controlled area.</li>
+    <li><strong>Plug Australian airspace</strong> (and optionally mine-specific geofences) into <strong>AirspaceChecker</strong> and surface compliance in <strong>ComplianceDashboard</strong>.</li>
+    <li><strong>Reuse Python modules</strong> (route planner, detector, analytics) in mine-specific scripts or dashboards for volumes, inspections, and environmental reporting.</li>
+  </ol>
+
+  <p class="meta">End of document. Waypoint Labs – Mining Operations in Australia.</p>
+
+</body>
+</html>

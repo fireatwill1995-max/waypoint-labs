@@ -1,0 +1,33 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Build
+.next
+out
+build
+dist
+
+# Env (keep tokens out of repo)
+.env
+.env.local
+.env*.local
+
+# Debug / IDE
+npm-debug.log*
+.DS_Store
+.vscode
+.idea
+
+# TypeScript
+*.tsbuildinfo
+
+# Python
+__pycache__
+*.py[cod]
+*.pyo
+.Python
+*.so
+.venv
+venv

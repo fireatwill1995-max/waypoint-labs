@@ -1,0 +1,22 @@
+{
+  "name": "Waypoint Labs | Drone Flight Control",
+  "short_name": "Waypoint Labs",
+  "description": "Advanced AI-powered civilian drone operations for agriculture, wildlife, and personal use",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0f1a",
+  "theme_color": "#10b981",
+  "orientation": "any",
+  "icons": [],
+  "categories": ["productivity", "utilities"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Civilian Dashboard",
+      "short_name": "Dashboard",
+      "description": "Access the civilian drone control dashboard",
+      "url": "/civilian",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
