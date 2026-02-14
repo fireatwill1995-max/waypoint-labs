@@ -12,6 +12,16 @@ Drone flight control platform with fully automated missions, semi-automated work
 - **Mission Planning Hub**: Unified hub for 3D preview, pattern generator, and mission templates
 - **Operations**: Cattle mustering, hunting, people recognition, filming, fishing, mining (Australia) with AI route planning and compliance
 
+## Live URL & Vercel
+
+The app is configured to run on **Vercel**. The live URL is set automatically from Vercel’s `VERCEL_URL`, or you can set it explicitly:
+
+- **In the repo:** Edit `app/config/site.ts` — the default fallback is `https://waypoint-labs.vercel.app`. Change it if your live URL is different and you don’t use env.
+- **On Vercel (recommended):** Project → Settings → Environment Variables → add:
+  - `NEXT_PUBLIC_APP_URL` = your production URL (e.g. `https://your-project.vercel.app` or your custom domain).
+
+With this, links, Open Graph, and the PWA manifest use the correct base URL. Optional: set `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_WS_URL` if you run a separate backend.
+
 ## Setup
 
 1. Install dependencies:

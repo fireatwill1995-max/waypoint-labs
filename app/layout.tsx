@@ -7,8 +7,10 @@ import BackButton from './components/BackButton'
 import SkipToContent from './components/SkipToContent'
 import ConsoleErrorLogger from './components/ConsoleErrorLogger'
 import WatermarkBody from './components/WatermarkBody'
+import { siteConfig } from './config/site'
 
 export const metadata = {
+  metadataBase: new URL(siteConfig.baseUrl),
   title: 'Waypoint Labs | Drone Flight Control — Automated Missions, More Drones',
   description: 'Fully automated missions, semi-automated workflows, and manual flight tools. Web, iOS, Android. 30+ drone protocols: DJI, Autel, PX4, ArduPilot, Parrot, Skydio, and more.',
   manifest: '/manifest.json',
@@ -16,6 +18,12 @@ export const metadata = {
     capable: true,
     statusBarStyle: 'default',
     title: 'Waypoint Labs',
+  },
+  openGraph: {
+    title: 'Waypoint Labs | Drone Flight Control',
+    description: 'Fully automated missions, semi-automated workflows, and manual flight tools. Web, iOS, Android.',
+    url: siteConfig.baseUrl,
+    siteName: siteConfig.name,
   },
 }
 
