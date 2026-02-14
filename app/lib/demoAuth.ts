@@ -139,6 +139,7 @@ export function useDemoAuth() {
           timestamp: Date.now(),
           userId: foundUser.id,
         }))
+        localStorage.setItem('userRole', foundUser.role)
       } catch (error) {
         if (process.env.NODE_ENV === 'development') {
           logger.error('Error saving to localStorage:', error)
@@ -157,6 +158,7 @@ export function useDemoAuth() {
       try {
         localStorage.removeItem(DEMO_USER_KEY)
         localStorage.removeItem(DEMO_SESSION_KEY)
+        localStorage.removeItem('userRole')
       } catch (error) {
         if (process.env.NODE_ENV === 'development') {
           logger.error('Error clearing localStorage:', error)

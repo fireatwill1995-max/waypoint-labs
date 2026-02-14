@@ -4,7 +4,7 @@
   "description": "Advanced AI-powered civilian drone operations for agriculture, wildlife, and personal use",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0a0f1a",
+  "background_color": "#0f172a",
   "theme_color": "#10b981",
   "orientation": "any",
   "icons": [],

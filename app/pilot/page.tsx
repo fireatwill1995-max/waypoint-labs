@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useApi } from '../lib/api'
 import MultiDroneVideoManager from '../components/MultiDroneVideoManager'
 import AIDroneCommandInterface from '../components/AIDroneCommandInterface'
@@ -26,6 +27,11 @@ import { IconPlane } from '../components/UIcons'
 import type { ApiStatus, Waypoint, Detection, RoutePlan, DroneInstance } from '../types/api'
 
 export default function PilotPage() {
+  const router = useRouter()
+  useEffect(() => {
+    router.replace('/civilian')
+  }, [router])
+
   const [apiStatus, setApiStatus] = useState<ApiStatus | null>(null)
   const [loading, setLoading] = useState(true)
   const [selectedAutonomy, setSelectedAutonomy] = useState<string>('manual')
@@ -99,7 +105,7 @@ export default function PilotPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0f1a] text-readable">
+      <div className="min-h-screen flex items-center justify-center bg-app-dji text-readable">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-dji-500/50 border-t-dji-400 rounded-full animate-spin mx-auto mb-4" aria-hidden />
           <p className="text-slate-300 font-futuristic">Loading Pilot Control Center...</p>
@@ -110,8 +116,8 @@ export default function PilotPage() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-[#0a0f1a] text-readable">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0a0f1a] via-[#0d1520] to-[#0f1825]" />
+      <div className="min-h-screen bg-app-dji text-readable">
+        <div className="absolute inset-0 bg-app-dji-gradient" />
         <div className="absolute inset-0 bg-dji-500/5 pointer-events-none" />
         {/* Header */}
         <header className="sticky top-0 z-50 glass-dji border-b border-dji-500/30 backdrop-blur-xl relative">
@@ -129,7 +135,7 @@ export default function PilotPage() {
                 </Link>
               </div>
               <div className="flex items-center gap-3">
-                <Link href="/select-role" className="btn-dji-secondary text-xs py-2 px-3">Switch role</Link>
+                <Link href="/civilian" className="btn-dji-secondary text-xs py-2 px-3">Dashboard</Link>
               </div>
             </div>
           </div>

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useSafeUser } from '../useSafeUser'
 import { DemoUserButton } from './DemoAuth'
+import WaypointLogo from './WaypointLogo'
 import { IconHome, IconClipboard, IconDrone, IconChart, IconTarget, IconBolt, IconCog, IconUsers, IconRefresh, IconLogout, IconLogin, IconMap } from './UIcons'
 
 interface NavItem {
@@ -68,7 +69,7 @@ export default function Navigation({ role: propRole }: NavigationProps) {
     : [
         { name: 'Home', href: '/', Icon: IconHome, shortcut: 'Alt+H' },
         { name: 'Supported Drones', href: '/supported-drones', Icon: IconMap },
-        { name: 'Select Mode', href: '/select-role', Icon: IconTarget, shortcut: 'Alt+M' },
+        { name: 'Dashboard', href: '/civilian', Icon: IconHome, shortcut: 'Alt+M' },
       ]
 
   const isActive = (href: string) => {
@@ -84,7 +85,7 @@ export default function Navigation({ role: propRole }: NavigationProps) {
       }
       if (e.altKey && e.key === 'm') {
         e.preventDefault()
-        router.push('/select-role')
+        router.push('/civilian')
       }
       if (e.altKey && e.key === 'd' && role) {
         e.preventDefault()
@@ -106,11 +107,7 @@ export default function Navigation({ role: propRole }: NavigationProps) {
         <div className="flex items-center justify-between h-14 sm:h-16 gap-2 sm:gap-4">
           <div className="flex items-center gap-4">
             <Link href={role ? (role === 'civilian' ? '/civilian' : role === 'military' ? '/military' : '/admin') : '/'} className="flex items-center gap-3 hover:opacity-90 transition-opacity">
-              <div className="w-10 h-10 bg-gradient-to-br from-dji-500 to-dji-600 rounded-xl flex items-center justify-center shadow-[0_2px_12px_rgba(9,113,206,0.5)] border border-dji-400/40">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-                </svg>
-              </div>
+              <WaypointLogo size={40} className="flex-shrink-0" />
               <div className="hidden sm:block">
                 <div className="text-sm font-bold text-white">Waypoint Labs</div>
                 <div className="text-xs text-slate-400">
@@ -156,12 +153,12 @@ export default function Navigation({ role: propRole }: NavigationProps) {
           <div className="flex items-center gap-3">
             <div className="hidden lg:flex items-center gap-2">
               <Link
-                href="/select-role"
+                href="/civilian"
                 className="btn-dji-secondary text-xs py-2 px-3 touch-target inline-flex items-center gap-1.5"
-                title="Switch Mode (Alt+M)"
+                title="Dashboard (Alt+M)"
               >
                 <IconRefresh className="w-4 h-4" />
-                Switch
+                Dashboard
               </Link>
             </div>
 
@@ -217,12 +214,12 @@ export default function Navigation({ role: propRole }: NavigationProps) {
             ))}
             <div className="pt-3 border-t border-dji-500/20">
               <Link
-                href="/select-role"
+                href="/civilian"
                 onClick={() => setMobileMenuOpen(false)}
                 className="block px-3 sm:px-4 py-3 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all touch-target flex items-center"
               >
                 <IconRefresh className="mr-3 w-5 h-5 flex-shrink-0" />
-                Switch Mode
+                Dashboard
               </Link>
               {user != null ? (
                 <button

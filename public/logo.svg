@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="wl-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa"/>
+      <stop offset="50%" stop-color="#0971CE"/>
+      <stop offset="100%" stop-color="#0760a8"/>
+    </linearGradient>
+  </defs>
+  <!-- Waypoint pin shape -->
+  <path d="M24 4C14.06 4 6 12.06 6 22c0 8 6 14 18 22 12-8 18-14 18-22 0-9.94-8.06-18-18-18z" fill="url(#wl-grad)" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+  <!-- Inner dot / target -->
+  <circle cx="24" cy="20" r="5" fill="white" opacity="0.95"/>
+  <circle cx="24" cy="20" r="2" fill="#0971CE"/>
+</svg>

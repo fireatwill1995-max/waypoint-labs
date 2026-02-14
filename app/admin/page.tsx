@@ -65,7 +65,7 @@ export default function AdminPage() {
       if (typeof window !== 'undefined') {
         const role = localStorage.getItem('userRole')
         if (role !== VALID_ADMIN_ROLE) {
-          router.push('/select-role')
+          router.push('/civilian')
         }
       }
     } catch {
@@ -130,7 +130,7 @@ export default function AdminPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0f1a] p-4 text-readable">
+      <div className="min-h-screen flex items-center justify-center bg-app-dji p-4 text-readable">
         <div className="card-dji p-8 max-w-md w-full border-2 border-dji-500/20">
           <div className="text-center mb-6">
             <div className="w-16 h-16 bg-slate-800/90 border border-dji-500/30 rounded-xl flex items-center justify-center mx-auto mb-4 text-dji-400">
@@ -159,7 +159,7 @@ export default function AdminPage() {
       }
     }
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0f1a] p-4 text-readable">
+      <div className="min-h-screen flex items-center justify-center bg-app-dji p-4 text-readable">
         <div className="card-dji p-8 max-w-md w-full border-2 border-dji-500/20">
           <div className="text-center mb-6">
             <div className="w-16 h-16 bg-slate-800/90 border border-dji-500/30 rounded-xl flex items-center justify-center mx-auto mb-4 text-dji-400">
@@ -208,7 +208,7 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0f1a] text-readable">
+      <div className="min-h-screen flex items-center justify-center bg-app-dji text-readable">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-dji-500/50 border-t-dji-400 rounded-full animate-spin mx-auto mb-4" aria-hidden />
           <p className="text-slate-300 font-futuristic">Loading Admin Dashboard...</p>
@@ -219,8 +219,8 @@ export default function AdminPage() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-[#0a0f1a] text-readable">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0a0f1a] via-[#0d1520] to-[#0f1825]" />
+      <div className="min-h-screen bg-app-dji text-readable">
+        <div className="absolute inset-0 bg-app-dji-gradient" />
         {/* Header */}
         <header className="sticky top-0 z-50 glass-dji border-b border-dji-500/30 backdrop-blur-xl relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

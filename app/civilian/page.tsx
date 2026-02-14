@@ -135,7 +135,7 @@ export default function CivilianPage() {
       // localStorage may be unavailable
     }
     if (role !== 'civilian') {
-      router.push('/select-role')
+      router.push('/civilian')
       return
     }
 
@@ -406,9 +406,9 @@ export default function CivilianPage() {
     <div>
       <ToastContainer toasts={toasts} onRemove={removeToast} />
       <ErrorBoundary>
-        <main id="main-content" className="min-h-screen relative bg-[#0a0f1a] overflow-hidden text-readable">
+        <main id="main-content" className="min-h-screen relative bg-app-dji overflow-hidden text-readable">
       {/* Simple dark base — clean so text and panels stand out */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0a0f1a] via-[#0d1520] to-[#0f1825]" />
+      <div className="absolute inset-0 bg-app-dji-gradient" />
       <div className="absolute inset-0 bg-jarvis-hologram opacity-60" />
       <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-dji-500/8 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[350px] h-[350px] bg-dji-400/8 rounded-full blur-3xl pointer-events-none" />
@@ -480,12 +480,12 @@ export default function CivilianPage() {
                   Supported Drones
                 </Link>
                 <Link 
-                  href="/select-role" 
+                  href="/civilian" 
                   className="px-4 py-2 glass-dji rounded-xl border border-dji-500/20 text-dji-300/80 hover:text-dji-300 hover:border-dji-500/40 transition-all font-futuristic text-sm"
-                  title="Switch Mode (Alt+M)"
+                  title="Dashboard (Alt+M)"
                 >
-                  <span className="hidden sm:inline">Switch Mode</span>
-                  <span className="sm:hidden">Switch</span>
+                  <span className="hidden sm:inline">Dashboard</span>
+                  <span className="sm:hidden">Dashboard</span>
                 </Link>
                 <DemoUserButton />
               </div>

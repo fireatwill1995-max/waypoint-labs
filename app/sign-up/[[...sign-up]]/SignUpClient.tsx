@@ -23,7 +23,7 @@ export default function SignUpClient() {
   return (
     <main
       id="main-content"
-      className="min-h-screen flex flex-col items-center justify-center bg-[#0a0f1a] p-4 text-readable"
+      className="min-h-screen flex flex-col items-center justify-center bg-app-dji p-4 text-readable"
       aria-live="polite"
       aria-label="Sign up"
     >
