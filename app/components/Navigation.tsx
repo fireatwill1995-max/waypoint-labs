@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { useSafeUser } from '../useSafeUser'
+import { useSafeUser } from '../hooks/useSafeUser'
 import { DemoUserButton } from './DemoAuth'
 import WaypointLogo from './WaypointLogo'
 import { IconHome, IconClipboard, IconDrone, IconChart, IconTarget, IconBolt, IconCog, IconUsers, IconRefresh, IconLogout, IconLogin, IconMap } from './UIcons'
@@ -178,7 +178,8 @@ export default function Navigation({ role: propRole }: NavigationProps) {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="md:hidden p-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition-all touch-target"
-              aria-label="Toggle menu"
+              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={mobileMenuOpen}
             >
               {mobileMenuOpen ? (
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -202,7 +203,7 @@ export default function Navigation({ role: propRole }: NavigationProps) {
                 key={item.name}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`block px-3 sm:px-4 py-3 rounded-lg text-sm font-medium transition-all touch-target flex items-center ${
+                className={`flex px-3 sm:px-4 py-3 rounded-lg text-sm font-medium transition-all touch-target items-center ${
                   isActive(item.href)
                     ? 'nav-dji-active'
                     : 'nav-dji-inactive'
@@ -216,7 +217,7 @@ export default function Navigation({ role: propRole }: NavigationProps) {
               <Link
                 href="/civilian"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 sm:px-4 py-3 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all touch-target flex items-center"
+                className="flex px-3 sm:px-4 py-3 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all touch-target items-center"
               >
                 <IconRefresh className="mr-3 w-5 h-5 flex-shrink-0" />
                 Dashboard
@@ -238,7 +239,7 @@ export default function Navigation({ role: propRole }: NavigationProps) {
                 <Link
                   href="/sign-in"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-3 sm:px-4 py-3 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all touch-target flex items-center"
+                  className="flex px-3 sm:px-4 py-3 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all touch-target items-center"
                 >
                   <IconLogin className="mr-3 w-5 h-5 flex-shrink-0" />
                   Demo Login

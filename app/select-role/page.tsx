@@ -18,7 +18,7 @@ export default function SelectRolePage() {
   }, [router])
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-app-dji">
+    <main id="main-content" className="min-h-screen flex items-center justify-center bg-app-dji">
       <div className="text-slate-400 font-futuristic">Redirecting to dashboard...</div>
     </main>
   )

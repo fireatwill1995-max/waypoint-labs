@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, useCallback } from 'react'
-import { logger } from './lib/logger'
+import { logger } from '../lib/logger'
 
 export interface WebSocketOptions {
   url: string
@@ -169,24 +169,14 @@ export function useWebSocket(options: WebSocketOptions) {
   }, [])
 
   useEffect(() => {
-    // Only attempt connection if URL is valid and not disabled
-    if (url && url.startsWith('ws://') && !url.includes('disabled')) {
+    const isValidUrl = url && (url.startsWith('ws://') || url.startsWith('wss://')) && !url.includes('disabled')
+    if (isValidUrl) {
       connect()
-      return () => {
-        disconnect()
-      }
-    } else if (url && url.startsWith('wss://')) {
-      connect()
-      return () => {
-        disconnect()
-      }
     }
-    // Return cleanup function even when not connecting
     return () => {
       disconnect()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [url, connect, disconnect]) // Include connect and disconnect in dependencies
+  }, [url, connect, disconnect])
 
   return {
     isConnected,

@@ -61,7 +61,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
       return (
         <div className="min-h-screen flex items-center justify-center p-8 bg-gradient-to-br from-slate-950 via-red-950 to-rose-950">
-          <div className="card-glass p-8 max-w-2xl w-full">
+          <div className="card-glass p-8 max-w-2xl w-full" role="alert">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-16 h-16 bg-red-500/20 rounded-xl flex items-center justify-center">
                 <svg className="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -77,7 +77,9 @@ export class ErrorBoundary extends Component<Props, State> {
             {this.state.error && (
               <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
                 <p className="text-sm font-mono text-red-400 mb-2">
-                  {this.state.error.message || 'Unknown error'}
+                  {process.env.NODE_ENV === 'development'
+                    ? (this.state.error.message || 'Unknown error')
+                    : 'An unexpected error occurred. Please try again.'}
                 </p>
                 {process.env.NODE_ENV === 'development' && this.state.errorInfo && (
                   <details className="mt-2">

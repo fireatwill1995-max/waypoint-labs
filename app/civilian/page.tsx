@@ -125,17 +125,21 @@ export default function CivilianPage() {
     try {
       if (typeof window !== 'undefined') {
         role = localStorage.getItem('userRole')
-        // Validate role value to prevent XSS
         if (role && !['civilian', 'military', 'admin'].includes(role)) {
           role = null
           localStorage.removeItem('userRole')
         }
       }
-    } catch (error) {
+    } catch {
       // localStorage may be unavailable
     }
-    if (role !== 'civilian') {
-      router.push('/civilian')
+
+    if (role === 'military') {
+      router.push('/military')
+      return
+    }
+    if (role === 'admin') {
+      router.push('/admin')
       return
     }
 
@@ -145,12 +149,10 @@ export default function CivilianPage() {
         setApiStatus(status)
       } catch (err: unknown) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to connect to API server'
-        const isOfflineError = err instanceof Error && (err as Error & { isOfflineError?: boolean }).isOfflineError
-        // Only show error toast if it's not an offline error (we'll show it in UI instead)
-        if (!isOfflineError && !errorMessage.includes('Backend server is not running')) {
+        const isOffline = err instanceof Error && 'isOfflineError' in err && (err as Error & { isOfflineError?: boolean }).isOfflineError === true
+        if (!isOffline && !errorMessage.includes('Backend server is not running')) {
           showError(errorMessage)
         }
-        // Set apiStatus to null to indicate offline
         setApiStatus(null)
       } finally {
         setLoading(false)
@@ -162,23 +164,28 @@ export default function CivilianPage() {
     }, 100)
 
     return () => clearTimeout(timer)
-    // Run once on mount; /api/status is handled by app/api/status/route.ts and always returns 200
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Helper function to deep compare arrays/objects (more efficient than JSON.stringify)
   const arraysEqual = useCallback((a: unknown[], b: unknown[]): boolean => {
-    // Handle null/undefined cases
     if (!a || !b) return a === b
     if (!Array.isArray(a) || !Array.isArray(b)) return false
     if (a.length !== b.length) return false
-    return a.every((val, idx) => {
-      const bVal = b[idx]
-      if (Array.isArray(val) && Array.isArray(bVal)) {
-        return arraysEqual(val, bVal)
+    for (let i = 0; i < a.length; i++) {
+      const va = a[i]
+      const vb = b[i]
+      if (va === vb) continue
+      if (Array.isArray(va) && Array.isArray(vb)) {
+        if (!arraysEqual(va, vb)) return false
+        continue
       }
-      return val === bVal
-    })
+      if (typeof va === 'object' && va !== null && typeof vb === 'object' && vb !== null) {
+        if (JSON.stringify(va) !== JSON.stringify(vb)) return false
+        continue
+      }
+      return false
+    }
+    return true
   }, [])
 
   // Sync WebSocket updates with local state (only update if different to prevent loops)
@@ -304,7 +311,7 @@ export default function CivilianPage() {
     try {
       const res = await fetchWithAuth('/api/civilian/route/cleanup', {
         method: 'POST',
-        body: JSON.stringify({ mode: selectedMode, waypoints, destination }),
+        body: { mode: selectedMode, waypoints, destination },
       }) as { route?: RoutePlan; waypoints?: Waypoint[]; reason?: string } | null
       if (res?.route) setRoutePlan(res.route)
       if (res?.waypoints) setWaypoints(res.waypoints)
@@ -330,12 +337,12 @@ export default function CivilianPage() {
     try {
       const res = await fetchWithAuth('/api/civilian/route/recommend', {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           mode: selectedMode,
           operation: selectedOperation?.id,
           location,
           destination,
-        }),
+        },
       }) as { route?: RoutePlan; waypoints?: Waypoint[]; reason?: string } | null
       if (res?.route) setRoutePlan(res.route)
       if (res?.waypoints) setWaypoints(res.waypoints)
@@ -361,12 +368,12 @@ export default function CivilianPage() {
     try {
       const res = await fetchWithAuth('/api/civilian/route/execute-ai', {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           mode: selectedMode,
           operation: selectedOperation?.id,
           waypoints,
           destination,
-        }),
+        },
       }) as { reason?: string } | null
       if (res?.reason) appendAiLog(res.reason)
       appendAiLog('AI takeover acknowledged by backend.')
@@ -389,7 +396,7 @@ export default function CivilianPage() {
       // Execute mission with waypoints
       const response = await fetchWithAuth('/api/civilian/route/execute', {
         method: 'POST',
-        body: JSON.stringify({ waypoints }),
+        body: { waypoints },
       }) as { success?: boolean; status?: string; message?: string } | null
       if (response && (response.success || response.status === 'success')) {
         success('Mission started successfully!')
@@ -492,7 +499,7 @@ export default function CivilianPage() {
             </div>
 
             {loading ? (
-              <div className="flex items-center justify-center py-16">
+              <div className="flex items-center justify-center py-16" role="status" aria-label="Loading">
                 <div className="text-center">
                   <div className="relative mx-auto mb-8">
                     <div className="w-20 h-20 border-4 border-dji-500 border-t-transparent rounded-full animate-spin shadow-[0_0_24px_rgba(0,212,255,0.35)]"></div>
@@ -770,6 +777,7 @@ export default function CivilianPage() {
                                     type="number"
                                     step="any"
                                     placeholder="Latitude"
+                                    aria-label="Start latitude"
                                     value={location.lat}
                                     onChange={(e) => setLocation((prev) => ({ ...prev, lat: e.target.value }))}
                                     className="glass-dji border border-dji-500/20 rounded-xl px-3 sm:px-4 py-2 sm:py-3 text-sm text-dji-300 placeholder-dji-400/30 focus:outline-none focus:border-dji-500/50 focus:ring-2 focus:ring-dji-500/20 font-futuristic bg-dji-500/5 text-slate-200 touch-target"
@@ -778,6 +786,7 @@ export default function CivilianPage() {
                                     type="number"
                                     step="any"
                                     placeholder="Longitude"
+                                    aria-label="Start longitude"
                                     value={location.lon}
                                     onChange={(e) => setLocation((prev) => ({ ...prev, lon: e.target.value }))}
                                     className="glass-dji border border-dji-500/20 rounded-xl px-3 sm:px-4 py-2 sm:py-3 text-sm text-dji-300 placeholder-dji-400/30 focus:outline-none focus:border-dji-500/50 focus:ring-2 focus:ring-dji-500/20 font-futuristic bg-dji-500/5 text-slate-200 touch-target"
@@ -793,6 +802,7 @@ export default function CivilianPage() {
                                     type="number"
                                     step="any"
                                     placeholder="Latitude"
+                                    aria-label="Destination latitude"
                                     value={destination.lat}
                                     onChange={(e) => setDestination((prev) => ({ ...prev, lat: e.target.value }))}
                                     className="glass-dji border border-dji-500/20 rounded-xl px-4 py-3 text-sm text-dji-300 placeholder-dji-400/30 focus:outline-none focus:border-dji-500/50 focus:ring-2 focus:ring-dji-500/20 font-futuristic bg-dji-500/5 text-slate-200"
@@ -801,6 +811,7 @@ export default function CivilianPage() {
                                     type="number"
                                     step="any"
                                     placeholder="Longitude"
+                                    aria-label="Destination longitude"
                                     value={destination.lon}
                                     onChange={(e) => setDestination((prev) => ({ ...prev, lon: e.target.value }))}
                                     className="glass-dji border border-dji-500/20 rounded-xl px-4 py-3 text-sm text-dji-300 placeholder-dji-400/30 focus:outline-none focus:border-dji-500/50 focus:ring-2 focus:ring-dji-500/20 font-futuristic bg-dji-500/5 text-slate-200"
@@ -963,6 +974,7 @@ export default function CivilianPage() {
                   {activeTab === 'chat' && (
                     <div id="chat">
                       <AIChatInterface
+                        key={selectedMode}
                         mode={selectedMode}
                         onRouteGenerated={(route) => {
                           const convertedRoute: RoutePlan = {

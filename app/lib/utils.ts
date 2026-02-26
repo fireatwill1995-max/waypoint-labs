@@ -19,20 +19,6 @@ export function handleApiError(error: unknown, defaultMessage: string = 'An erro
 }
 
 /**
- * Show a toast notification (simple implementation)
- * Note: This function is deprecated - use the useToast hook instead
- * Kept for backward compatibility but should not be used in new code
- */
-export function showToast(message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info') {
-  // Log only in development - in production, use the useToast hook from components
-  logger.warn('showToast() is deprecated. Use the useToast hook instead.')
-  logger.info(`[${type.toUpperCase()}] ${message}`)
-  
-  // Do not use alert() in production - this function should not be called
-  // All components should use the useToast hook from hooks/useToast.ts
-}
-
-/**
  * Convert timestamp to ISO string format
  * Handles both Unix timestamps (numbers) and ISO strings
  */

@@ -21,7 +21,7 @@ import type { ApiStatus } from '../types/api'
 
 const VALID_ADMIN_ROLE = 'admin'
 const ADMIN_CODE_STORAGE_KEY = 'admin_code_verified'
-const ADMIN_ACCESS_CODE = (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_ADMIN_ACCESS_CODE) || 'WL-ADMIN-2024'
+const ADMIN_ACCESS_CODE = 'WL-ADMIN-2024'
 
 function getAdminCodeVerified(): boolean {
   if (typeof window === 'undefined') return false

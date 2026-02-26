@@ -7,8 +7,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from loguru import logger
 
-from src.utils.performance_monitor import get_performance_monitor
-from src.utils.exceptions import ATAException
+from .performance_monitor import get_performance_monitor
+from .exceptions import ATAException
 
 
 class AlertSeverity(Enum):

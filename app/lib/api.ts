@@ -8,7 +8,7 @@ interface FetchOptions extends Omit<RequestInit, 'body'> {
 }
 
 // Import useSafeAuth from the proper location
-import { useSafeAuth } from '../useSafeAuth'
+import { useSafeAuth } from '../hooks/useSafeAuth'
 
 export function useApi() {
   const auth = useSafeAuth()
@@ -28,10 +28,20 @@ export function useApi() {
             ? url
             : `/${url}`
       
-      // Prepare headers
+      const incomingHeaders: Record<string, string> = {}
+      if (options.headers) {
+        const h = options.headers
+        if (h instanceof Headers) {
+          h.forEach((v, k) => { incomingHeaders[k] = v })
+        } else if (Array.isArray(h)) {
+          h.forEach(([k, v]) => { incomingHeaders[k] = v })
+        } else {
+          Object.assign(incomingHeaders, h)
+        }
+      }
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
-        ...(options.headers as Record<string, string>),
+        ...incomingHeaders,
       }
       
       // Add auth token if available
@@ -70,9 +80,9 @@ export function useApi() {
         }
         
         if (response.status === 404) {
-          const isOfflineError = new Error(errorMessage) as Error & { isOfflineError?: boolean }
-          isOfflineError.isOfflineError = true
-          throw isOfflineError
+          const notFoundError: Error & { isOfflineError?: boolean } = new Error(errorMessage)
+          notFoundError.isOfflineError = true
+          throw notFoundError
         }
         
         throw new Error(errorMessage)

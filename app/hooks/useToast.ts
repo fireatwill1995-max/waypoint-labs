@@ -35,7 +35,9 @@ export function useToast() {
   }, [])
 
   const addToast = useCallback((type: ToastType, message: string, duration = 5000) => {
-    const id = Math.random().toString(36).substring(7)
+    const id = typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
     const toast: Toast = { id, type, message, duration }
     
     setToasts((prev) => [...prev, toast])

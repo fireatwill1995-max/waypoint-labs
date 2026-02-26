@@ -33,7 +33,7 @@ const nextConfig = {
             { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
             { key: 'X-XSS-Protection', value: '1; mode=block' },
             { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-            { key: 'Content-Security-Policy', value: "frame-ancestors 'self'; default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: https:; script-src-elem 'self' 'unsafe-inline' blob: https:; style-src 'self' 'unsafe-inline' https:; style-src-elem 'self' 'unsafe-inline' https:; img-src 'self' data: https: blob:; font-src 'self' data: https:; connect-src 'self' ws: wss: http: https:; frame-src 'self' https:; worker-src 'self' blob:;" },
+            { key: 'Content-Security-Policy', value: `frame-ancestors 'self'; default-src 'self'; script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''} blob: https:; script-src-elem 'self' 'unsafe-inline'${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''} blob: https:; style-src 'self' 'unsafe-inline' https:; style-src-elem 'self' 'unsafe-inline' https:; img-src 'self' data: https: blob:; font-src 'self' data: https:; connect-src 'self' ws: wss: http: https:; frame-src 'self' https:; worker-src 'self' blob:;` },
           ],
         },
       ]

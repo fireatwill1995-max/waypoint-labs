@@ -7,17 +7,14 @@ const STUB_TEMPLATES = [
   { id: 'stub-3', name: 'Orbit', description: 'Circular orbit around a point of interest', category: 'inspection', pattern_type: 'orbit', tags: ['orbit', 'inspection'] },
 ]
 
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest): Promise<NextResponse<{ templates: typeof STUB_TEMPLATES }>> {
   try {
-    const category = request.nextUrl.searchParams.get('category')?.trim()
-    let templates = STUB_TEMPLATES
-    if (category) {
-      templates = STUB_TEMPLATES.filter(
-        (t) => t.category.toLowerCase() === category.toLowerCase()
-      )
-    }
+    const category = request.nextUrl?.searchParams.get('category')?.trim()
+    const templates = category
+      ? STUB_TEMPLATES.filter((t) => t.category.toLowerCase() === category.toLowerCase())
+      : STUB_TEMPLATES
     return NextResponse.json({ templates })
   } catch {
-    return NextResponse.json({ templates: [] })
+    return NextResponse.json({ templates: [] as typeof STUB_TEMPLATES })
   }
 }

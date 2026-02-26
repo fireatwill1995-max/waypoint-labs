@@ -21,7 +21,10 @@ export async function GET() {
         return NextResponse.json(OFFLINE_STATUS, { status: 200 })
       }
       const data = await res.json()
-      return NextResponse.json(data)
+      if (data && typeof data === 'object' && !Array.isArray(data)) {
+        return NextResponse.json(data)
+      }
+      return NextResponse.json(OFFLINE_STATUS, { status: 200 })
     } finally {
       clearTimeout(timeout)
     }

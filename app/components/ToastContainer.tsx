@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect } from 'react'
 import type { Toast } from '../hooks/useToast'
 
 interface ToastContainerProps {
@@ -9,15 +8,6 @@ interface ToastContainerProps {
 }
 
 function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) => void }) {
-  useEffect(() => {
-    if (toast.duration && toast.duration > 0) {
-      const timer = setTimeout(() => {
-        onRemove(toast.id)
-      }, toast.duration)
-      return () => clearTimeout(timer)
-    }
-    return undefined
-  }, [toast, onRemove])
 
   const icons = {
     success: (

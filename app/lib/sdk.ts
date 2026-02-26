@@ -51,8 +51,12 @@ export async function sendSDKCommand(
   const body = { command: command.toLowerCase(), params: params ?? {} }
   const fetcher = fetchWithAuth ?? ((u: string, o?: { body?: object }) =>
     fetch(u, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: o?.body ? JSON.stringify(o.body) : undefined }).then(r => r.json()))
-  const res = await fetcher(url, { body }) as { success?: boolean; command?: string; message?: string }
-  return { success: res.success ?? false, command: res.command ?? command, message: res.message }
+  try {
+    const res = await fetcher(url, { body }) as { success?: boolean; command?: string; message?: string } | null
+    return { success: res?.success ?? false, command: res?.command ?? command, message: res?.message }
+  } catch {
+    return { success: false, command: String(command), message: 'Failed to send command' }
+  }
 }
 
 /**
@@ -66,8 +70,12 @@ export async function uploadWaypoints(
   const body = { waypoints }
   const fetcher = fetchWithAuth ?? ((u: string, o?: { body?: object }) =>
     fetch(u, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: o?.body ? JSON.stringify(o.body) : undefined }).then(r => r.json()))
-  const res = await fetcher(url, { body }) as { success?: boolean; count?: number; message?: string }
-  return { success: res.success ?? false, count: res.count ?? 0, message: res.message }
+  try {
+    const res = await fetcher(url, { body }) as { success?: boolean; count?: number; message?: string } | null
+    return { success: res?.success ?? false, count: res?.count ?? 0, message: res?.message }
+  } catch {
+    return { success: false, count: 0, message: 'Failed to upload waypoints' }
+  }
 }
 
 /**

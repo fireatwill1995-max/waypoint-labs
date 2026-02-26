@@ -4,7 +4,7 @@
  * Auth hook for API token. Uses demo auth only (Clerk removed).
  * useApi() uses getToken() for Authorization header.
  */
-import { useDemoAuth } from './lib/demoAuth'
+import { useDemoAuth } from '../lib/demoAuth'
 
 export function useSafeAuth() {
   const { getToken, isSignedIn, isLoaded } = useDemoAuth()

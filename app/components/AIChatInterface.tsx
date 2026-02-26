@@ -57,6 +57,14 @@ export default function AIChatInterface({
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const synthRef = useRef<SpeechSynthesis | null>(typeof window !== 'undefined' ? window.speechSynthesis : null)
+  const abortRef = useRef<AbortController | null>(null)
+
+  useEffect(() => {
+    return () => {
+      abortRef.current?.abort()
+      synthRef.current?.cancel()
+    }
+  }, [])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -309,7 +317,7 @@ export default function AIChatInterface({
           </div>
         ))}
         {isLoading && (
-          <div className="flex justify-start">
+          <div className="flex justify-start" role="status" aria-label="AI is thinking">
             <div className="glass-dji border border-dji-500/20 rounded-xl p-3">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-dji-400 rounded-full animate-pulse" />
@@ -349,11 +357,13 @@ export default function AIChatInterface({
             placeholder="Type or use voice (headset) to plan and run missions..."
             className="flex-1 input-dji rounded-xl px-4 py-3 text-sm resize-none min-h-[44px]"
             rows={2}
+            aria-label="Message to AI assistant"
           />
           <button
             onClick={() => handleSend()}
             disabled={!input.trim() || isLoading}
             className="btn-dji px-6 py-3 disabled:opacity-50 disabled:cursor-not-allowed touch-target"
+            aria-label="Send message"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />

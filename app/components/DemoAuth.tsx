@@ -123,6 +123,11 @@ export function DemoUserButton() {
 
   if (!user) return null
 
+  const handleSignOut = () => {
+    signOut()
+    window.location.href = '/sign-in'
+  }
+
   return (
     <div className="relative flex items-center gap-3" role="group" aria-label="User menu">
       <div className="w-8 h-8 rounded-full bg-gradient-to-br from-dji-500 to-dji-600 flex items-center justify-center text-white font-semibold text-sm border border-cyan-400/30 flex-shrink-0" aria-hidden>
@@ -134,7 +139,7 @@ export function DemoUserButton() {
       </div>
       <button
         type="button"
-        onClick={signOut}
+        onClick={handleSignOut}
         className="btn-dji-secondary text-sm px-4 sm:px-5 py-2 min-h-[44px] touch-manipulation focus:outline-none focus-visible:ring-2 focus-visible:ring-dji-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
         title="Sign Out"
         aria-label="Sign out"

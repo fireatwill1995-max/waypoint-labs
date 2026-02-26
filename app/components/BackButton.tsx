@@ -24,7 +24,7 @@ export default function BackButton() {
           localStorage.removeItem('userRole')
         }
       }
-    } catch (error) {
+    } catch {
       // localStorage may be unavailable
     }
     if (role === 'civilian') {

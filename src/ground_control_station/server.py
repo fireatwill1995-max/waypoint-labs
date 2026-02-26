@@ -1,7 +1,7 @@
 """
 FastAPI Backend Server for JARVIS AI Civilian Drone App
 """
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import Depends, FastAPI, Header, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -9,13 +9,29 @@ from typing import List, Optional, Dict, Any
 import uvicorn
 import json
 import asyncio
+import logging
 from datetime import datetime
 
-# Import civilian modules
 import sys
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+
+_logger = logging.getLogger(__name__)
+
+
+def _safe_error_detail(e: Exception) -> str:
+    """Return a safe error message. In production, hide internal details."""
+    if os.getenv("DEBUG", "").lower() in ("1", "true"):
+        return str(e)
+    return "An internal error occurred. Please try again."
+
+async def _require_auth(authorization: Optional[str] = Header(None)) -> str:
+    """Validate bearer token. Returns the token value or raises 401."""
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing or invalid authorization header")
+    return authorization[7:]
+
 
 # Load environment variables
 load_dotenv()
@@ -72,29 +88,29 @@ try:
     anthropic_key = os.getenv("ANTHROPIC_API_KEY")
     if anthropic_key:
         claude_integration = ClaudeIntegration(api_key=anthropic_key)
-        print("[OK] Claude Integration initialized")
+        _logger.info("Claude Integration initialized")
     else:
-        print("[WARN] Claude Integration not available: No ANTHROPIC_API_KEY found")
+        _logger.warning("Claude Integration not available: No ANTHROPIC_API_KEY found")
 except Exception as e:
-    print(f"[WARN] Could not initialize Claude Integration: {e}")
+    _logger.warning("Could not initialize Claude Integration: %s", e)
 
 # Initialize AI Advisor with Claude integration
 try:
     ai_advisor = CivilianAIAdvisor(config=default_config, claude_integration=claude_integration)
     if claude_integration:
-        print("[OK] AI Advisor initialized with Claude integration")
+        _logger.info("AI Advisor initialized with Claude integration")
     else:
-        print("[OK] AI Advisor initialized (without Claude integration)")
+        _logger.info("AI Advisor initialized (without Claude integration)")
 except Exception as e:
-    print(f"[WARN] Could not initialize AI Advisor: {e}")
+    _logger.warning("Could not initialize AI Advisor: %s", e)
     ai_advisor = None
 
 # Initialize Route Planner
 try:
     route_planner = CivilianRoutePlanner(config=default_config, ai_advisor=ai_advisor)
-    print("[OK] Route Planner initialized")
+    _logger.info("Route Planner initialized")
 except Exception as e:
-    print(f"[WARN] Could not initialize Route Planner: {e}")
+    _logger.warning("Could not initialize Route Planner: %s", e)
     route_planner = None
 
 # WebSocket connections
@@ -118,7 +134,7 @@ class ConnectionManager:
             await websocket.send_text(message)
         except Exception as e:
             # Log error but don't raise - connection may be closed
-            print(f"[WARN] Failed to send WebSocket message: {e}")
+            _logger.warning("Failed to send WebSocket message: %s", e)
 
     async def broadcast(self, message: dict):
         disconnected = []
@@ -127,7 +143,7 @@ class ConnectionManager:
                 await connection.send_json(message)
             except Exception as e:
                 # Mark for removal if connection is closed
-                print(f"[WARN] Failed to broadcast to WebSocket: {e}")
+                _logger.warning("Failed to broadcast to WebSocket: %s", e)
                 disconnected.append(connection)
         
         # Remove disconnected connections
@@ -189,7 +205,7 @@ async def get_status():
 
 # Admin endpoints
 @app.get("/api/admin/metrics")
-async def get_system_metrics():
+async def get_system_metrics(_token: str = Depends(_require_auth)):
     """Get system metrics for admin dashboard"""
     try:
         import psutil
@@ -232,10 +248,11 @@ async def get_system_metrics():
             "api_requests_per_minute": 0
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Error fetching system metrics")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 @app.get("/api/admin/performance")
-async def get_performance_data():
+async def get_performance_data(_token: str = Depends(_require_auth)):
     """Get performance monitoring data"""
     try:
         import psutil
@@ -256,10 +273,11 @@ async def get_performance_data():
     except ImportError:
         return {"data": []}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 @app.get("/api/admin/security")
-async def get_security_settings():
+async def get_security_settings(_token: str = Depends(_require_auth)):
     """Get security settings"""
     return {
         "two_factor_enabled": False,
@@ -276,12 +294,12 @@ async def get_security_settings():
     }
 
 @app.post("/api/admin/security")
-async def update_security_settings(settings: Dict[str, Any]):
+async def update_security_settings(settings: Dict[str, Any], _token: str = Depends(_require_auth)):
     """Update security settings"""
     return {"success": True, "message": "Security settings updated"}
 
 @app.get("/api/admin/config")
-async def get_system_config():
+async def get_system_config(_token: str = Depends(_require_auth)):
     """Get system configuration"""
     return {
         "sections": [
@@ -297,37 +315,39 @@ async def get_system_config():
     }
 
 @app.post("/api/admin/config")
-async def update_system_config(config: Dict[str, Any]):
+async def update_system_config(config: Dict[str, Any], _token: str = Depends(_require_auth)):
     """Update system configuration"""
     return {"success": True, "message": "Configuration updated"}
 
 @app.get("/api/admin/audit-logs")
-async def get_audit_logs(skip: int = 0, limit: int = 50):
+async def get_audit_logs(skip: int = 0, limit: int = 50, _token: str = Depends(_require_auth)):
     """Get audit logs"""
+    skip = max(0, skip)
+    limit = max(1, min(200, limit))
     return {
         "logs": [],
         "total": 0
     }
 
 @app.get("/api/admin/users")
-async def get_users():
+async def get_users(_token: str = Depends(_require_auth)):
     """Get all users"""
     return {
         "users": []
     }
 
 @app.post("/api/admin/users/role")
-async def update_user_role(request: Dict[str, Any]):
+async def update_user_role(request: Dict[str, Any], _token: str = Depends(_require_auth)):
     """Update user role"""
     return {"success": True, "message": "User role updated"}
 
 @app.post("/api/admin/users/status")
-async def update_user_status(request: Dict[str, Any]):
+async def update_user_status(request: Dict[str, Any], _token: str = Depends(_require_auth)):
     """Update user status"""
     return {"success": True, "message": "User status updated"}
 
 @app.delete("/api/admin/users/{user_id}")
-async def delete_user(user_id: str):
+async def delete_user(user_id: str, _token: str = Depends(_require_auth)):
     """Delete a user"""
     return {"success": True, "message": "User deleted"}
 
@@ -432,7 +452,8 @@ async def detect_objects_get(mode: Optional[str] = None):
     try:
         return DetectionResponse(detections=[], confidence=0.0)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 @app.post("/api/civilian/detect")
 async def detect_objects(request: DetectionRequest):
@@ -446,7 +467,8 @@ async def detect_objects(request: DetectionRequest):
             confidence=0.85
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 @app.post("/api/civilian/camera/add")
 async def add_camera(camera_data: Dict[str, Any]):
@@ -454,7 +476,8 @@ async def add_camera(camera_data: Dict[str, Any]):
     try:
         return {"success": True, "camera_id": "camera_1"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 @app.post("/api/civilian/analyze")
 async def analyze_image(analysis_data: Dict[str, Any]):
@@ -462,7 +485,8 @@ async def analyze_image(analysis_data: Dict[str, Any]):
     try:
         return {"analysis": "completed", "results": {}}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 # AI advice endpoints
 @app.post("/api/civilian/ai/filming-advice")
@@ -483,7 +507,8 @@ async def get_filming_advice(request: Dict[str, Any]):
             "recommendations": advice.framing_tips
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 @app.post("/api/civilian/ai/mustering-advice")
 async def get_mustering_advice(request: Dict[str, Any]):
@@ -501,7 +526,8 @@ async def get_mustering_advice(request: Dict[str, Any]):
             "recommendations": advice.optimization_tips
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 @app.post("/api/civilian/ai/hunting-advice")
 async def get_hunting_advice(request: Dict[str, Any]):
@@ -522,7 +548,8 @@ async def get_hunting_advice(request: Dict[str, Any]):
             "recommendations": advice.safety_considerations
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 @app.post("/api/civilian/ai/general-advice")
 async def get_general_advice(request: Dict[str, Any]):
@@ -547,7 +574,8 @@ async def get_general_advice(request: Dict[str, Any]):
             "recommendations": advice.recommendations if hasattr(advice, 'recommendations') else []
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 @app.post("/api/civilian/ai/chat")
 async def ai_chat(request: AIChatRequest):
@@ -580,7 +608,8 @@ async def ai_chat(request: AIChatRequest):
             advice=response_text
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 # Route planning endpoints
 @app.post("/api/civilian/route/plan-filming")
@@ -604,7 +633,8 @@ async def plan_filming_route(request: RoutePlanRequest):
             }
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 @app.post("/api/civilian/route/plan-mustering")
 async def plan_mustering_route(request: RoutePlanRequest):
@@ -628,7 +658,8 @@ async def plan_mustering_route(request: RoutePlanRequest):
             }
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 @app.post("/api/civilian/route/plan-hunting")
 async def plan_hunting_route(request: RoutePlanRequest):
@@ -651,7 +682,8 @@ async def plan_hunting_route(request: RoutePlanRequest):
             }
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 @app.post("/api/civilian/route/plan-fishing")
 async def plan_fishing_route(request: RoutePlanRequest):
@@ -674,7 +706,8 @@ async def plan_fishing_route(request: RoutePlanRequest):
             }
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 @app.post("/api/civilian/route/plan")
 async def plan_general_route(request: RoutePlanRequest):
@@ -696,7 +729,8 @@ async def plan_general_route(request: RoutePlanRequest):
             }
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 @app.post("/api/civilian/route/execute")
 async def execute_route(request: Dict[str, Any]):
@@ -704,7 +738,8 @@ async def execute_route(request: Dict[str, Any]):
     try:
         return {"success": True, "status": "executing", "message": "Route execution started"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 @app.post("/api/civilian/route/execute-ai")
 async def execute_ai_route(request: Dict[str, Any]):
@@ -712,7 +747,8 @@ async def execute_ai_route(request: Dict[str, Any]):
     try:
         return {"success": True, "status": "executing", "reason": "AI route execution started"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 @app.post("/api/civilian/route/recommend")
 async def recommend_route(request: Dict[str, Any]):
@@ -725,7 +761,8 @@ async def recommend_route(request: Dict[str, Any]):
             }
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 @app.post("/api/civilian/route/cleanup")
 async def cleanup_route(request: Dict[str, Any]):
@@ -733,7 +770,8 @@ async def cleanup_route(request: Dict[str, Any]):
     try:
         return {"route": None, "reason": "Route cleanup completed"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 # Fishing endpoints
 @app.post("/api/civilian/fishing/start-scout")
@@ -742,7 +780,8 @@ async def start_fishing_scout(request: Dict[str, Any]):
     try:
         return {"success": True, "scout_id": "scout_1"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 @app.post("/api/civilian/fishing/detect-fish")
 async def detect_fish(request: Dict[str, Any]):
@@ -750,7 +789,8 @@ async def detect_fish(request: Dict[str, Any]):
     try:
         return {"detections": [], "confidence": 0.0}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 # Tracking endpoints
 @app.get("/api/civilian/tracking/status")
@@ -759,7 +799,8 @@ async def get_tracking_status():
     try:
         return {"status": "active", "tracking_count": 0}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 @app.post("/api/civilian/tracking/advice")
 async def get_tracking_advice(request: Dict[str, Any]):
@@ -767,7 +808,8 @@ async def get_tracking_advice(request: Dict[str, Any]):
     try:
         return {"advice": "Tracking advice based on current conditions"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 # Drone command endpoints
 @app.post("/api/civilian/drone/ai-command")
@@ -783,7 +825,8 @@ async def ai_drone_command(request: Dict[str, Any]):
             "safety_warnings": []
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 @app.post("/api/civilian/drone/command")
 async def drone_command(request: Dict[str, Any]):
@@ -791,7 +834,8 @@ async def drone_command(request: Dict[str, Any]):
     try:
         return {"success": True, "command_id": "cmd_1"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 @app.post("/api/civilian/drone/execute-coordination")
 async def execute_coordination(request: Dict[str, Any]):
@@ -799,7 +843,8 @@ async def execute_coordination(request: Dict[str, Any]):
     try:
         return {"success": True, "coordination_id": "coord_1"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 # --- Mining (Australia) endpoints ---
 @app.get("/api/mining/compliance/status")
@@ -862,7 +907,8 @@ async def plan_mining_survey_grid(request: Dict[str, Any]):
         }
         return {"route": route, "waypoints": waypoints}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 
 @app.get("/api/mining/inspection/templates")
@@ -903,7 +949,8 @@ async def plan_mining_route(request: Dict[str, Any]):
         ]
         return {"route": {"waypoints": waypoints, "distance_km": 0, "estimated_time_minutes": 0}}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        _logger.exception("Server error")
+        raise HTTPException(status_code=500, detail=_safe_error_detail(e))
 
 
 @app.post("/api/mining/volume/estimate")
@@ -981,12 +1028,21 @@ async def websocket_endpoint(websocket: WebSocket):
         while True:
             try:
                 data = await websocket.receive_text()
-                # Echo back or process message
-                await manager.send_personal_message(f"Echo: {data}", websocket)
+                try:
+                    msg = json.loads(data)
+                    msg_type = msg.get("type", "") if isinstance(msg, dict) else ""
+                    if msg_type == "subscribe":
+                        await websocket.send_json({"type": "subscribed", "channels": msg.get("channels", [])})
+                    elif msg_type == "ping":
+                        await websocket.send_json({"type": "pong"})
+                    else:
+                        await websocket.send_json({"type": "ack", "received": msg_type or "unknown"})
+                except json.JSONDecodeError:
+                    await websocket.send_json({"type": "error", "message": "Invalid JSON"})
             except WebSocketDisconnect:
                 break
             except Exception as e:
-                print(f"[WARN] WebSocket error: {e}")
+                _logger.warning("WebSocket error: %s", e)
                 break
     except WebSocketDisconnect:
         pass

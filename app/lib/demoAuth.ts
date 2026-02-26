@@ -13,7 +13,6 @@ export interface DemoUser {
 const DEMO_USER_KEY = 'demo_user'
 const DEMO_SESSION_KEY = 'demo_session'
 
-// Admin-only: required for admin account sign-in (not exposed in DEMO_USERS display)
 export const ADMIN_CREDENTIALS = {
   email: 'admin@waypointlabs.com',
   password: 'WlAdmin2024!',

@@ -3,11 +3,9 @@
 import Link from 'next/link'
 import { IconDrone, IconMap, IconChip, IconChart, IconSparkles, IconCheck } from './components/UIcons'
 
-export const dynamic = 'force-dynamic'
-
 export default function Home() {
   return (
-    <main className="min-h-screen relative overflow-hidden bg-app-dji text-readable">
+    <main id="main-content" className="min-h-screen relative overflow-hidden bg-app-dji text-readable">
       {/* Background */}
       <div className="absolute inset-0 bg-app-dji-gradient" />
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-20" />

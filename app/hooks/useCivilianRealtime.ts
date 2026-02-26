@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { useWebSocket } from '../useWebSocket'
+import { useWebSocket } from './useWebSocket'
 import { logger } from '../lib/logger'
 import type { DroneInstance, Detection, RoutePlan, Waypoint } from '../types/api'
 
@@ -32,7 +32,7 @@ export function useCivilianRealtime(initialData?: Partial<CivilianRealtimeData>)
   const shouldConnect = WS_BASE_URL && WS_BASE_URL !== 'ws://' && WS_BASE_URL !== '' && WS_BASE_URL.startsWith('ws')
   
   const { isConnected, send } = useWebSocket({
-    url: shouldConnect ? `${WS_BASE_URL}/ws` : 'ws://disabled', // Use invalid URL if disabled to prevent connection
+    url: shouldConnect ? `${WS_BASE_URL}/ws` : '',
     onMessage: (message) => {
       try {
         // Handle different message types
