@@ -122,11 +122,11 @@ export default function FleetManagement() {
     try {
       const response = await fetchWithAuth('/api/drones/fleet/command', {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           drone_ids: Array.from(selectedDrones),
           command,
           mode: fleetMode,
-        }),
+        },
       }) as { success?: boolean } | null
 
       if (response && response.success) {

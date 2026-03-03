@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  productionBrowserSourceMaps: false,
   // Use 'export' for Cloudflare Pages static deploy (BUILD_FOR_CF=1); otherwise standalone for Fly.io
   output: process.env.BUILD_FOR_CF === '1' ? 'export' : 'standalone',
   // Allow ngrok and other tunnel hosts so _next/static chunks load (no 404)

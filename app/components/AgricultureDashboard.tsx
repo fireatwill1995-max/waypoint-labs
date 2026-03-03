@@ -92,10 +92,10 @@ export default function AgricultureDashboard() {
 
       const response = await fetchWithAuth('/api/agriculture/analyze', {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           rgb_image: rgbImage,
-          location: [0.0, 0.0] // Would get from user input
-        })
+          location: [0.0, 0.0],
+        },
       }) as { analysis: AgricultureAnalysis }
 
       setAnalysis(response.analysis)

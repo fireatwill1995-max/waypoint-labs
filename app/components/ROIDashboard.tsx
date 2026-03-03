@@ -38,17 +38,17 @@ export default function ROIDashboard() {
 
       const response = await fetchWithAuth('/api/analytics/roi/calculate', {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           missions: missions.length > 0 ? missions : [
             { flight_time_hours: 2.5 },
             { flight_time_hours: 3.0 },
-            { flight_time_hours: 1.8 }
+            { flight_time_hours: 1.8 },
           ],
           period_start: periodStart.toISOString(),
           period_end: periodEnd.toISOString(),
           revenue_per_mission: revenuePerMission ? parseFloat(revenuePerMission) : null,
-          savings_per_mission: savingsPerMission ? parseFloat(savingsPerMission) : null
-        })
+          savings_per_mission: savingsPerMission ? parseFloat(savingsPerMission) : null,
+        },
       }) as { roi: ROIAnalysis }
 
       setRoi(response.roi)

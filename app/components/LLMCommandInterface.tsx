@@ -56,11 +56,11 @@ export default function LLMCommandInterface({ mode, availableDrones, onCommandPr
     try {
       const response = await fetchWithAuth('/api/civilian/drone/ai-command', {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           command: sanitizedCommand,
           mode: mode || null,
           availableDrones: validDrones,
-        }),
+        },
       }) as {
         command?: LLMCommandResult
         alternatives?: Array<{ action: string; confidence: number; reasoning?: string }>

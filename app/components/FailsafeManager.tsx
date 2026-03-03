@@ -121,7 +121,7 @@ export default function FailsafeManager({ droneId }: FailsafeManagerProps) {
     try {
       const response = await fetchWithAuth(`/api/drones/${droneId}/failsafe`, {
         method: 'POST',
-        body: JSON.stringify(config),
+        body: config,
       }) as { success: boolean }
 
       if (response && response.success) {

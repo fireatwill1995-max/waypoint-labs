@@ -51,7 +51,7 @@ export default function UserManagement() {
     try {
       await fetchWithAuth('/api/admin/users/role', {
         method: 'POST',
-        body: JSON.stringify({ user_id: userId, role: newRole })
+        body: { user_id: userId, role: newRole }
       })
       success('User role updated successfully')
       loadUsers()
@@ -66,7 +66,7 @@ export default function UserManagement() {
     try {
       await fetchWithAuth('/api/admin/users/status', {
         method: 'POST',
-        body: JSON.stringify({ user_id: userId, status: newStatus })
+        body: { user_id: userId, status: newStatus }
       })
       success('User status updated successfully')
       loadUsers()

@@ -51,7 +51,7 @@ export default function SystemConfig() {
     try {
       await fetchWithAuth('/api/admin/config', {
         method: 'POST',
-        body: JSON.stringify({ sections: config })
+        body: { sections: config }
       })
       success('Configuration saved successfully')
     } catch (error) {

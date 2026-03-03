@@ -80,10 +80,10 @@ export default function RemoteIDManager({ droneId }: RemoteIDManagerProps) {
     try {
       const response = await fetchWithAuth(`/api/drones/${droneId}/remote-id/enable`, {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           operator_id: String(operatorInfo.operator_id || '').trim().slice(0, 100),
           registration_id: String(operatorInfo.registration_id || '').trim().slice(0, 100),
-        }),
+        },
       }) as { success: boolean }
 
       if (response && response.success) {
@@ -123,7 +123,7 @@ export default function RemoteIDManager({ droneId }: RemoteIDManagerProps) {
     try {
       const response = await fetchWithAuth(`/api/drones/${droneId}/remote-id/operator`, {
         method: 'POST',
-        body: JSON.stringify(operatorInfo),
+        body: operatorInfo,
       }) as { success: boolean }
 
       if (response && response.success) {

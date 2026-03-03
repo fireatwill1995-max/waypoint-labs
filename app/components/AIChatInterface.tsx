@@ -60,9 +60,11 @@ export default function AIChatInterface({
   const abortRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
+    const abortController = abortRef.current
+    const speechSynth = synthRef.current
     return () => {
-      abortRef.current?.abort()
-      synthRef.current?.cancel()
+      abortController?.abort()
+      speechSynth?.cancel()
     }
   }, [])
 
@@ -145,11 +147,11 @@ export default function AIChatInterface({
 
       const response = await fetchWithAuth('/api/civilian/ai/chat', {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           message: messageContent,
           mode,
-          conversation_history: history
-        })
+          conversation_history: history,
+        },
       }) as {
         response?: string
         route?: RoutePlan

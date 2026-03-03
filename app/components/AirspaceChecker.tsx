@@ -67,10 +67,10 @@ export default function AirspaceChecker() {
     try {
       const response = await fetchWithAuth('/api/safety/airspace/check', {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           location: [lat, lon],
-          altitude: alt
-        })
+          altitude: alt,
+        },
       }) as { airspace_check?: AirspaceCheck }
 
       // Validate response structure

@@ -169,7 +169,7 @@ export default function DroneConnectionPanel() {
 
       const response = await fetchWithAuth('/api/drones/connect', {
         method: 'POST',
-        body: JSON.stringify(sanitizedConfig),
+        body: sanitizedConfig,
       }) as { success?: boolean; protocol?: string; error?: string } | null
 
       if (response && response.success) {

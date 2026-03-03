@@ -61,7 +61,7 @@ export default function SecuritySettings() {
     try {
       await fetchWithAuth('/api/admin/security', {
         method: 'POST',
-        body: JSON.stringify(settings)
+        body: settings
       })
       success('Security settings saved successfully')
     } catch (error) {

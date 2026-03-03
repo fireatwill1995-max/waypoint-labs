@@ -54,11 +54,11 @@ export default function ComplianceDashboard() {
     try {
       const response = await fetchWithAuth('/api/compliance/report', {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           entity_id: entityId,
           period_days: 30,
-          format: 'json'
-        })
+          format: 'json',
+        },
       }) as { report: ComplianceReport }
 
       // Download report

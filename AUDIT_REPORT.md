@@ -115,3 +115,42 @@ This document summarizes the comprehensive audit and fixes applied to the Waypoi
 - ✅ All console statements replaced with logger
 - ✅ WebSocket error handling improved
 - ✅ SSR safety verified for all localStorage access
+
+---
+
+## Audit Session (Deep Structured Audit)
+
+### Phase 1 – Architecture
+- Confirmed entry points and data flow per ARCHITECTURE.md; civilian page remains large (consider tab-based split).
+- Fixed tab indicator positioning on civilian page (was using `translateX` with wrong percentage; now uses `left` for correct pill position).
+- Dead code: SARDashboard, AgricultureDashboard, FlightLogAnalyzer, OfflineMissionManager, RemoteIDManager remain unused at route level; kept for future use.
+
+### Phase 2 – Dependencies
+- Ran `npm audit fix`; resolved moderate (ajv) and some high (minimatch) issues. Remaining high: Next.js and glob require major upgrade (`npm audit fix --force`).
+- Demo admin password: now read from `NEXT_PUBLIC_DEMO_ADMIN_PASSWORD` with dev fallback; documented in `.env.example`.
+
+### Phase 3 – Static Analysis
+- No circular dependencies; no barrel files causing cycles; no dynamic imports. TypeScript compiles cleanly.
+
+### Phase 4 – Type Safety
+- API route return types: `app/api/status/route.ts` GET returns `Promise<NextResponse>`; `app/api/civilian/detect/route.ts` GET returns `Promise<NextResponse<{ detections: [] }>>`.
+- Civilian page: removed unsafe `as Waypoint[]`; use `Array.isArray(fromRoute)` and assign `fromRoute` to state.
+
+### Phase 5 – Logic & API Body Handling
+- All `fetchWithAuth` call sites now pass **objects** for `body` (API layer stringifies). Removed double-stringify in:
+  - `app/civilian/page.tsx` (Plan Route)
+  - MissionPatternGenerator, DroneCommandPanel, AIDroneCommandInterface, LLMCommandInterface, AIChatInterface
+  - Admin: UserManagement, SecuritySettings, SystemConfig
+  - FailsafeManager, DroneConnectionPanel, ConstructionProgressTracker, ComplianceDashboard, AirspaceChecker, RemoteIDManager
+  - SARDashboard, PhotogrammetryPanel, AgricultureDashboard, FleetManagement, OfflineMissionManager, ROIDashboard, VolumetricTool, InspectionWorkflow
+
+### Phase 6–7 – Null Safety & Error Handling
+- Response handling: civilian page only sets waypoints from `response.route.waypoints` when `Array.isArray(fromRoute) && fromRoute.length > 0`.
+- ErrorBoundary and API error handling already in place; no silent swallows in critical paths.
+
+### Phase 10 – Security
+- Demo admin password from env (see Phase 2). No XSS (`dangerouslySetInnerHTML` not used). Backend uses env for ANTHROPIC_API_KEY. `.gitignore` excludes `.env*.local`.
+
+### Phase 14 – Build & Config
+- `next.config.js`: set `productionBrowserSourceMaps: false` so production builds do not expose source maps.
+- `.env.example`: added `NEXT_PUBLIC_DEMO_ADMIN_PASSWORD` (optional).

@@ -56,7 +56,7 @@ export default function DroneCommandPanel({ drone, mode: _mode }: DroneCommandPa
 
       await fetchWithAuth('/api/civilian/drone/command', {
         method: 'POST',
-        body: JSON.stringify(commandData),
+        body: commandData,
       })
     } catch (error: unknown) {
       logger.error('Failed to execute command:', error)

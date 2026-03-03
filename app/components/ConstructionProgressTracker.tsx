@@ -23,12 +23,12 @@ export default function ConstructionProgressTracker() {
       // In production, would upload DEM files
       const response = await fetchWithAuth('/api/construction/track-progress', {
         method: 'POST',
-        body: JSON.stringify({
-          current_dem: [], // Would be actual DEM data
-          baseline_dem: [], // Would be actual DEM data
+        body: {
+          current_dem: [],
+          baseline_dem: [],
           bounds: [0, 0, 100, 100],
-          resolution: 0.1
-        })
+          resolution: 0.1,
+        },
       }) as { progress: ProgressResult }
 
       setProgress(response.progress)

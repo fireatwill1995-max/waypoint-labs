@@ -184,11 +184,11 @@ export default function AIDroneCommandInterface({
       // Send to AI for interpretation
       const response = await fetchWithAuth('/api/civilian/drone/ai-command', {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           command,
           mode,
           availableDrones: drones.map((d) => d.id),
-        }),
+        },
       }) as { command?: AIDroneCommand } | null
 
       if (response?.command) {
@@ -236,7 +236,7 @@ export default function AIDroneCommandInterface({
     try {
       await fetchWithAuth('/api/civilian/drone/execute-coordination', {
         method: 'POST',
-        body: JSON.stringify(pendingCommand),
+        body: pendingCommand,
       })
 
       success('Drone coordination command executed successfully!')

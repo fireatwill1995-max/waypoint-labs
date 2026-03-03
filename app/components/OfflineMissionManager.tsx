@@ -29,14 +29,14 @@ export default function OfflineMissionManager() {
     try {
       const response = await fetchWithAuth('/api/offline/cache-mission', {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           mission_id: String(missionId || '').trim().slice(0, 100),
-          waypoints: waypoints.map(wp => ({
+          waypoints: waypoints.map((wp) => ({
             lat: typeof wp.lat === 'number' && !isNaN(wp.lat) && wp.lat >= -90 && wp.lat <= 90 ? wp.lat : 0,
             lon: typeof wp.lon === 'number' && !isNaN(wp.lon) && wp.lon >= -180 && wp.lon <= 180 ? wp.lon : 0,
-            altitude: typeof wp.altitude === 'number' && !isNaN(wp.altitude) && wp.altitude >= -500 && wp.altitude <= 20000 ? wp.altitude : 100
-          }))
-        })
+            altitude: typeof wp.altitude === 'number' && !isNaN(wp.altitude) && wp.altitude >= -500 && wp.altitude <= 20000 ? wp.altitude : 100,
+          })),
+        },
       }) as { mission: CachedMission }
 
       setCachedMissions([...cachedMissions, response.mission])

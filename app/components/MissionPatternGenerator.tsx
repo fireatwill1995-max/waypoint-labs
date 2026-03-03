@@ -103,7 +103,7 @@ export default function MissionPatternGenerator() {
 
       const response = await fetchWithAuth('/api/mission/pattern/generate', {
         method: 'POST',
-        body: JSON.stringify(payload)
+        body: payload,
       }) as { pattern: MissionPattern }
 
       setPattern(response.pattern)

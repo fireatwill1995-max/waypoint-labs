@@ -13,9 +13,16 @@ export interface DemoUser {
 const DEMO_USER_KEY = 'demo_user'
 const DEMO_SESSION_KEY = 'demo_session'
 
+const DEMO_ADMIN_PASSWORD_ENV =
+  typeof process.env.NEXT_PUBLIC_DEMO_ADMIN_PASSWORD === 'string' && process.env.NEXT_PUBLIC_DEMO_ADMIN_PASSWORD.trim()
+    ? process.env.NEXT_PUBLIC_DEMO_ADMIN_PASSWORD.trim()
+    : null
+
 export const ADMIN_CREDENTIALS = {
   email: 'admin@waypointlabs.com',
-  password: 'WlAdmin2024!',
+  get password(): string {
+    return DEMO_ADMIN_PASSWORD_ENV ?? 'WlAdmin2024!'
+  },
 } as const
 
 // Demo users: civilian (shown on login) + admin (sign in with email/password only)

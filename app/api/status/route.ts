@@ -5,7 +5,7 @@ const OFFLINE_STATUS = {
   authenticated: false,
 }
 
-export async function GET() {
+export async function GET(): Promise<NextResponse> {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
   const url = `${apiUrl.replace(/\/$/, '')}/api/status`
 

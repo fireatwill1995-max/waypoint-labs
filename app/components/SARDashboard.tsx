@@ -31,7 +31,7 @@ export default function SARDashboard() {
     try {
       const response = await fetchWithAuth('/api/sar/create-mission', {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           mission_id: missionId,
           search_bounds: [
             (() => {
@@ -51,10 +51,8 @@ export default function SARDashboard() {
               return !isNaN(parsed) && parsed >= -180 && parsed <= 180 && parsed > parseFloat(searchBounds.minLon || '0') ? parsed : 1
             })()
           ],
-          target_type: ['person', 'vehicle', 'aircraft', 'vessel'].includes(targetType) 
-            ? targetType 
-            : 'person'
-        })
+          target_type: ['person', 'vehicle', 'aircraft', 'vessel'].includes(targetType) ? targetType : 'person',
+        },
       }) as { mission: SARMission }
 
       setMission(response.mission)

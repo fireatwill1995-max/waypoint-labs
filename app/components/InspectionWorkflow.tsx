@@ -85,11 +85,11 @@ export default function InspectionWorkflow() {
 
       const response = await fetchWithAuth('/api/inspection/perform', {
         method: 'POST',
-        body: JSON.stringify({
+        body: {
           asset_type: assetType,
           image_data: imageData,
-          location: { lat: 0.0, lon: 0.0 }
-        })
+          location: { lat: 0.0, lon: 0.0 },
+        },
       }) as { report: InspectionReport }
 
       setReport(response.report)

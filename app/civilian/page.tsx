@@ -28,19 +28,13 @@ import { useCivilianRealtime } from '../hooks/useCivilianRealtime'
 import { logger } from '../lib/logger'
 import { useDemoAuth } from '../lib/demoAuth'
 import { DemoUserButton } from '../components/DemoAuth'
-import { IconClipboard, IconChat, IconGamepad, IconChip, IconChart, IconCog, IconCattle, IconCamera, IconUsers, IconFish, IconVideo, IconSearch, IconTarget, IconMining } from '../components/UIcons'
+import { IconClipboard, IconChart, IconCattle, IconCamera, IconUsers, IconFish, IconVideo, IconSearch, IconTarget, IconMining } from '../components/UIcons'
 import MiningDashboard from '../components/MiningDashboard'
 import MissionPlanningHub from '../components/MissionPlanningHub'
+import { CivilianTabBar } from '../components/civilian/CivilianTabBar'
+import { CivilianRightColumn } from '../components/civilian/CivilianRightColumn'
+import { MODE_DETECTION_LABELS } from '../components/civilian/constants'
 import type { ApiStatus, Waypoint, Detection, OperationOption, RoutePlan, DroneInstance } from '../types/api'
-
-const MODE_DETECTION_LABELS: Record<string, string> = {
-  cattle: '🐄 Cattle',
-  hunting: '🦌 Wildlife',
-  filming: '🎬 Filming',
-  fishing: '🐟 Fishing',
-  mining: '⛏️ Mining',
-  people: '👥 People',
-}
 
 export default function CivilianPage() {
   const [apiStatus, setApiStatus] = useState<ApiStatus | null>(null)
@@ -651,60 +645,11 @@ export default function CivilianPage() {
           {/* Main Content Tabs - Enhanced for Better Navigation */}
           {selectedMode && (
             <div className="mb-6 animate-fade-in sticky top-[64px] z-30 bg-slate-900/95 backdrop-blur-xl border-b border-dji-500/20 pb-4 shadow-lg pt-4" id="operations">
-              <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6 overflow-x-auto scrollbar-hide pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
-                {[
-                  { id: 'plan', label: 'Operation Planning', Icon: IconClipboard, shortcut: '1', description: 'Plan routes and operations' },
-                  { id: 'chat', label: 'AI Chat', Icon: IconChat, shortcut: '2', description: 'Chat with AI assistant' },
-                  { id: 'manual', label: 'Manual Control', Icon: IconGamepad, shortcut: '3', description: 'Manual drone control' },
-                  { id: 'autonomous', label: 'Autonomy', Icon: IconChip, shortcut: '4', description: 'Autonomous operations' },
-                  { id: 'monitoring', label: 'Monitoring', Icon: IconChart, shortcut: '5', description: 'Video feeds, analytics, and detections' },
-                  { id: 'advanced', label: 'Advanced', Icon: IconCog, shortcut: '6', description: 'Voice, gesture, VR, and multi-screen controls' },
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      setActiveTab(tab.id as 'plan' | 'chat' | 'manual' | 'autonomous' | 'monitoring' | 'advanced')
-                      // When switching to monitoring tab, ensure video tab is selected
-                      if (tab.id === 'monitoring') {
-                        setRightColumnTab('video')
-                      }
-                      // Scroll to top of content smoothly
-                      setTimeout(() => {
-                        document.getElementById('main-content')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                      }, 100)
-                    }}
-                    className={`px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold transition-all duration-300 cursor-pointer font-futuristic whitespace-nowrap flex items-center gap-1 sm:gap-2 group relative touch-target ${
-                      activeTab === tab.id
-                        ? 'bg-gradient-to-r from-dji-500 via-dji-400 to-blue-500 text-white shadow-[0_0_24px_rgba(0,212,255,0.35)] border-2 border-dji-500/50 animate-jarvis-glow scale-105'
-                        : 'glass-dji border-2 border-dji-500/20 text-dji-400/70 hover:border-dji-500/40 hover:text-dji-300 hover:scale-[1.02]'
-                    }`}
-                    style={{ pointerEvents: 'auto', zIndex: 10 }}
-                    title={`${tab.label} - ${tab.description} (Press ${tab.shortcut})`}
-                    aria-label={tab.label}
-                  >
-                    <tab.Icon className="w-5 h-5 sm:w-5 sm:h-5 flex-shrink-0" />
-                    <span className="text-on-dark hidden sm:inline text-sm sm:text-base">{tab.label}</span>
-                    <span className="text-xs opacity-70 hidden lg:inline">({tab.shortcut})</span>
-                    {/* Tooltip on hover */}
-                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1 bg-slate-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
-                      {tab.description}
-                      <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></span>
-                    </span>
-                  </button>
-                ))}
-              </div>
-              {/* Tab indicator line */}
-              <div className="h-1 bg-dji-500/20 rounded-full overflow-hidden relative">
-                <div 
-                  className="h-full bg-gradient-to-r from-dji-500 to-dji-400 transition-all duration-300 absolute left-0 top-0"
-                  style={{ 
-                    width: '16.666%', 
-                    transform: `translateX(${['plan', 'chat', 'manual', 'autonomous', 'monitoring', 'advanced'].indexOf(activeTab) * 100}%)` 
-                  }}
-                />
-              </div>
+              <CivilianTabBar
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+                onMonitoringOpen={() => setRightColumnTab('video')}
+              />
 
               <div className={`grid gap-6 ${selectedMode && (activeTab === 'plan' || activeTab === 'chat' || activeTab === 'manual' || activeTab === 'autonomous') ? 'lg:grid-cols-2' : activeTab === 'monitoring' || activeTab === 'advanced' ? 'lg:grid-cols-1' : 'lg:grid-cols-2'}`}>
                 {/* Left Column */}
@@ -857,36 +802,31 @@ export default function CivilianPage() {
                                     : '/api/civilian/route/plan'
                                   const response = await fetchWithAuth(endpoint, {
                                     method: 'POST',
-                                    body: JSON.stringify(selectedMode === 'mining' && selectedOperation?.id === 'survey-grid'
-                                    ? {
-                                        location: selectedOperation.requiresLocation ? { lat: parseCoord(location.lat) ?? 0, lon: parseCoord(location.lon) ?? 0 } : undefined,
-                                        destination: selectedOperation.requiresDestination ? { lat: parseCoord(destination.lat) ?? 0, lon: parseCoord(destination.lon) ?? 0 } : undefined,
-                                        rows: 5,
-                                        cols: 5,
-                                        spacing_m: 20,
-                                      }
-                                    : { 
-                                      operation: selectedOperation?.id,
-                                      mode: selectedMode,
-                                      location: selectedOperation?.requiresLocation
-                                        ? {
-                                            lat: parseCoord(location.lat) ?? 0,
-                                            lon: parseCoord(location.lon) ?? 0,
-                                          }
-                                        : undefined,
-                                      destination: selectedOperation?.requiresDestination
-                                        ? {
-                                            lat: parseCoord(destination.lat) ?? 0,
-                                            lon: parseCoord(destination.lon) ?? 0,
-                                          }
-                                        : undefined,
-                                    }),
+                                    body: selectedMode === 'mining' && selectedOperation?.id === 'survey-grid'
+                                      ? {
+                                          location: selectedOperation.requiresLocation ? { lat: parseCoord(location.lat) ?? 0, lon: parseCoord(location.lon) ?? 0 } : undefined,
+                                          destination: selectedOperation.requiresDestination ? { lat: parseCoord(destination.lat) ?? 0, lon: parseCoord(destination.lon) ?? 0 } : undefined,
+                                          rows: 5,
+                                          cols: 5,
+                                          spacing_m: 20,
+                                        }
+                                      : {
+                                          operation: selectedOperation?.id,
+                                          mode: selectedMode,
+                                          location: selectedOperation?.requiresLocation
+                                            ? { lat: parseCoord(location.lat) ?? 0, lon: parseCoord(location.lon) ?? 0 }
+                                            : undefined,
+                                          destination: selectedOperation?.requiresDestination
+                                            ? { lat: parseCoord(destination.lat) ?? 0, lon: parseCoord(destination.lon) ?? 0 }
+                                            : undefined,
+                                        },
                                   }) as { route?: RoutePlan; waypoints?: Waypoint[] } | null
                                   if (response?.route) {
                                     setRoutePlan(response.route)
                                     success('Route planned successfully!')
-                                    if (response.route.waypoints?.length && !response.waypoints?.length) {
-                                      setWaypoints(response.route.waypoints as Waypoint[])
+                                    const fromRoute = response.route.waypoints
+                                    if (Array.isArray(fromRoute) && fromRoute.length > 0 && !response.waypoints?.length) {
+                                      setWaypoints(fromRoute)
                                     }
                                   }
                                   if (response?.waypoints?.length) {
@@ -1305,98 +1245,26 @@ export default function CivilianPage() {
                   )}
                 </div>
 
-                {/* Right Column: Live Drone Feed (visible on Plan / Chat / Manual / Autonomous so user can see stream while interacting with AI) */}
+                {/* Right Column: Live Drone Feed (visible on Plan / Chat / Manual / Autonomous) */}
                 {selectedMode && (activeTab === 'plan' || activeTab === 'chat' || activeTab === 'manual' || activeTab === 'autonomous') && (
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-sm font-semibold text-dji-400 uppercase tracking-wider">Live Drone Feed</span>
-                    </div>
-                    <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-2">
-                      {[
-                        { id: 'video' as const, label: 'Video', Icon: IconVideo },
-                        { id: 'analytics' as const, label: 'Analytics', Icon: IconChart },
-                        { id: 'detections' as const, label: 'Detections', Icon: IconSearch },
-                      ].map((subTab) => (
-                        <button
-                          key={subTab.id}
-                          onClick={() => setRightColumnTab(subTab.id)}
-                          className={`px-3 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap flex items-center gap-1.5 ${
-                            rightColumnTab === subTab.id
-                              ? 'bg-dji-500/20 text-dji-400 border border-dji-500/40'
-                              : 'text-on-dark-muted hover:text-white hover:bg-white/5 border border-transparent'
-                          }`}
-                        >
-                          <subTab.Icon className="w-4 h-4 flex-shrink-0" />
-                          <span>{subTab.label}</span>
-                        </button>
-                      ))}
-                    </div>
-                    {rightColumnTab === 'video' && (
-                      <div className="card-dji p-4 animate-fade-in border-2 border-dji-500/20">
-                        <MultiDroneVideoManager
-                          mode={selectedMode}
-                          initialDrones={drones}
-                          onDronesChange={(newDrones) => {
-                            setDrones(newDrones)
-                            updateRealtimeDrones(newDrones)
-                          }}
-                          onDetections={(_droneId, newDetections) => {
-                            setDetections(newDetections)
-                            updateRealtimeDetections(newDetections)
-                          }}
-                        />
-                      </div>
-                    )}
-                    {rightColumnTab === 'analytics' && selectedMode && (
-                      <div className="animate-fade-in">
-                        {selectedMode === 'fishing' ? (
-                          <FishingAnalyticsDashboard
-                            detections={detections}
-                            drones={drones}
-                            boatLocation={location.lat && location.lon ? { lat: parseFloat(location.lat) || 0, lon: parseFloat(location.lon) || 0 } : undefined}
-                          />
-                        ) : (
-                          <AnalyticsDashboard drones={drones} detections={detections} mode={selectedMode} />
-                        )}
-                      </div>
-                    )}
-                    {rightColumnTab === 'detections' && selectedMode && (
-                      <div className="space-y-2 animate-fade-in">
-                        {selectedMode === 'fishing' ? (
-                          <FishDetectionPanel
-                            detections={detections}
-                            boatLocation={location.lat && location.lon ? { lat: parseFloat(location.lat) || 0, lon: parseFloat(location.lon) || 0 } : undefined}
-                            onNavigateToFish={(fish) => {
-                              if (fish.location_from_boat?.bearing_degrees != null && fish.location_from_boat?.distance_meters != null) {
-                                const bearing = (fish.location_from_boat.bearing_degrees * Math.PI) / 180
-                                const distance = (fish.location_from_boat.distance_meters || 0) / 111000
-                                const boatLat = parseFloat(location.lat) || 0
-                                const boatLon = parseFloat(location.lon) || 0
-                                const targetLat = boatLat + distance * Math.cos(bearing)
-                                const targetLon = boatLon + distance * Math.sin(bearing)
-                                setDestination({ lat: targetLat.toString(), lon: targetLon.toString() })
-                                success(`Navigating to ${fish.species || 'fish'} location`)
-                              }
-                            }}
-                          />
-                        ) : detections.length === 0 ? (
-                          <div className="card-dji p-4 text-center border-2 border-dji-500/20">
-                            <p className="text-sm text-slate-400">No detections yet.</p>
-                          </div>
-                        ) : (
-                          detections.slice(0, 20).map((det, idx) => (
-                            <div key={idx} className="card-dji p-3 border-2 border-dji-500/20">
-                              <div className="flex justify-between">
-                                <span className="text-sm font-medium text-dji-300">{det.label || 'Unknown'}</span>
-                                {det.confidence != null && <span className="text-xs text-slate-400">{(det.confidence * 100).toFixed(0)}%</span>}
-                              </div>
-                              {det.distance != null && <p className="text-xs text-slate-500">{det.distance}</p>}
-                            </div>
-                          ))
-                        )}
-                      </div>
-                    )}
-                  </div>
+                  <CivilianRightColumn
+                    mode={selectedMode}
+                    rightColumnTab={rightColumnTab}
+                    onRightColumnTabChange={setRightColumnTab}
+                    drones={drones}
+                    onDronesChange={(newDrones) => {
+                      setDrones(newDrones)
+                      updateRealtimeDrones(newDrones)
+                    }}
+                    detections={detections}
+                    onDetectionsChange={(newDetections) => {
+                      setDetections(newDetections)
+                      updateRealtimeDetections(newDetections)
+                    }}
+                    location={location}
+                    onDestinationSet={(lat, lon) => setDestination({ lat, lon })}
+                    onSuccess={success}
+                  />
                 )}
               </div>
             </div>

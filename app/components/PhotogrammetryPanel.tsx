@@ -95,7 +95,7 @@ export default function PhotogrammetryPanel() {
       
       const response = await fetchWithAuth('/api/photogrammetry/reconstruct', {
         method: 'POST',
-        body: JSON.stringify({ images: images.slice(0, 100) }) // Limit to 100 images
+        body: { images: images.slice(0, 100) },
       }) as { result?: PhotogrammetryResult } | null
 
       if (response && response.result) {

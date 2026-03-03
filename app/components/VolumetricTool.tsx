@@ -45,7 +45,7 @@ export default function VolumetricTool() {
 
       const response = await fetchWithAuth('/api/analytics/volumetric/calculate', {
         method: 'POST',
-        body: JSON.stringify(demData)
+        body: demData,
       }) as { volume: VolumeResult }
 
       setResult(response.volume)
@@ -69,7 +69,7 @@ export default function VolumetricTool() {
 
       const response = await fetchWithAuth('/api/analytics/volumetric/calculate', {
         method: 'POST',
-        body: JSON.stringify(stockpileData)
+        body: stockpileData,
       }) as { stockpile: StockpileResult }
 
       setResult(response.stockpile)
