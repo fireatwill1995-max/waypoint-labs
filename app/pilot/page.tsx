@@ -1,20 +1,37 @@
 'use client'
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { IconDrone, IconMap } from '../components/UIcons'
 
 export default function PilotPage() {
-  const router = useRouter()
-  useEffect(() => {
-    router.replace('/civilian')
-  }, [router])
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-app-dji text-readable">
+    <main
+      id="main-content"
+      className="min-h-screen relative overflow-hidden bg-app-dji text-readable"
+      aria-label="Pilot dashboard"
+    >
       <div className="absolute inset-0 bg-app-dji-gradient" />
-      <div className="relative z-10 text-center text-slate-300 font-futuristic">
-        <p>Redirecting to dashboard...</p>
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-20" />
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-[85vh] px-4 sm:px-6">
+        <div className="text-center max-w-2xl mx-auto">
+          <div className="w-20 h-20 rounded-2xl bg-dji-500/20 border-2 border-dji-500/40 flex items-center justify-center mx-auto mb-6">
+            <IconMap className="w-10 h-10 text-dji-400" />
+          </div>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gradient-dji font-futuristic mb-4">
+            Pilot
+          </h1>
+          <p className="text-slate-400 font-futuristic text-lg mb-8">
+            Flight control and mission execution are available in the unified dashboard. Plan missions, run waypoints, and use manual or autonomous modes.
+          </p>
+          <Link
+            href="/civilian"
+            className="btn-dji inline-flex items-center justify-center gap-2 text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 touch-manipulation"
+          >
+            <IconDrone className="w-5 h-5" />
+            Open dashboard
+          </Link>
+        </div>
       </div>
-    </div>
+    </main>
   )
 }

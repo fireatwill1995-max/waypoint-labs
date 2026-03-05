@@ -24,6 +24,7 @@ export default function UserManagement() {
   const [showModal, setShowModal] = useState(false)
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null)
+  const [showAddUserModal, setShowAddUserModal] = useState(false)
   const { fetchWithAuth } = useApi()
   const { success, error: showError } = useToast()
 
@@ -110,8 +111,13 @@ export default function UserManagement() {
           <h2 className="text-3xl font-bold text-white mb-2">User Management</h2>
           <p className="text-slate-400">Manage users, roles, and permissions</p>
         </div>
-        <button className="btn-primary">
-          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button
+          type="button"
+          onClick={() => setShowAddUserModal(true)}
+          className="btn-primary inline-flex items-center justify-center gap-2"
+          aria-label="Add user"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
           </svg>
           Add User
@@ -226,6 +232,34 @@ export default function UserManagement() {
                   ))}
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add User Modal */}
+      {showAddUserModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowAddUserModal(false)} role="dialog" aria-modal="true" aria-labelledby="add-user-title">
+          <div className="card-glass p-6 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-4">
+              <h3 id="add-user-title" className="text-xl font-bold text-white">Add User</h3>
+              <button type="button" onClick={() => setShowAddUserModal(false)} className="text-slate-400 hover:text-white" aria-label="Close">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <p className="text-slate-300 mb-6">
+              In this demo, user creation is not available. The backend supports viewing, editing roles, and deleting users only. In production, this would open an invite flow or user creation form.
+            </p>
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowAddUserModal(false)}
+                className="px-4 py-2 bg-dji-500 text-white rounded-lg hover:bg-dji-600 font-futuristic"
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>

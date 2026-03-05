@@ -1,24 +1,36 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import WaypointLogo from '../../components/WaypointLogo'
 
 export default function SignUpClient() {
   const router = useRouter()
-  const [redirecting, setRedirecting] = useState(true)
+  const [email, setEmail] = useState('')
+  const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    const t = setTimeout(() => {
-      router.replace('/sign-in')
-    }, 800)
+    if (!submitted) return
+    const t = setTimeout(() => router.replace('/sign-in'), 1500)
     return () => clearTimeout(t)
-  }, [router])
+  }, [submitted, router])
 
-  useEffect(() => {
-    const n = setTimeout(() => setRedirecting(false), 1500)
-    return () => clearTimeout(n)
-  }, [])
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    const trimmed = email.trim().toLowerCase()
+    if (!trimmed) {
+      setError('Please enter your email address.')
+      return
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      setError('Please enter a valid email address.')
+      return
+    }
+    setSubmitted(true)
+  }
 
   return (
     <main
@@ -27,20 +39,71 @@ export default function SignUpClient() {
       aria-live="polite"
       aria-label="Sign up"
     >
-      <div className="card-dji p-8 max-w-md w-full text-center border-2 border-dji-500/20">
-        {redirecting ? (
-          <>
+      <div className="absolute inset-0 bg-app-dji-gradient" />
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-20" />
+      <div className="relative z-10 card-dji p-6 sm:p-10 max-w-md w-full border-2 border-dji-500/20">
+        <div className="flex justify-center mb-6">
+          <WaypointLogo size={80} className="sm:w-24 sm:h-24" />
+        </div>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gradient-dji font-futuristic text-center mb-2">
+          Create account
+        </h1>
+        <p className="text-slate-400 font-futuristic text-sm text-center mb-6">
+          Enter your email to get started. You will sign in on the next step.
+        </p>
+
+        {submitted ? (
+          <div className="text-center py-6" role="status" aria-live="polite">
             <div className="w-12 h-12 border-4 border-dji-500/50 border-t-dji-400 rounded-full animate-spin mx-auto mb-4" aria-hidden />
             <p className="text-slate-300 font-futuristic">Redirecting to sign in...</p>
-          </>
+            <p className="text-slate-500 text-sm font-futuristic mt-2">
+              Complete sign in there to access the dashboard.
+            </p>
+          </div>
         ) : (
-          <>
-            <p className="text-slate-300 font-futuristic mb-4">If you are not redirected, use the link below.</p>
-            <Link href="/sign-in" className="btn-dji inline-flex items-center gap-2 touch-manipulation">
-              Go to Sign In
-            </Link>
-          </>
+          <form onSubmit={handleSubmit} className="space-y-4" noValidate aria-label="Sign up form">
+            <div>
+              <label htmlFor="signup-email" className="block text-sm text-slate-400 mb-2 font-medium font-futuristic">
+                Email address
+              </label>
+              <input
+                id="signup-email"
+                type="email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value)
+                  setError('')
+                }}
+                placeholder="you@example.com"
+                className="input-dji w-full rounded-xl font-futuristic"
+                autoComplete="email"
+                autoFocus
+                aria-invalid={!!error}
+                aria-describedby={error ? 'signup-error' : undefined}
+              />
+            </div>
+            {error && (
+              <p id="signup-error" role="alert" className="text-red-400 text-sm font-futuristic">
+                {error}
+              </p>
+            )}
+            <button
+              type="submit"
+              className="btn-dji w-full py-3 font-futuristic touch-manipulation min-h-[44px]"
+            >
+              Continue
+            </button>
+          </form>
         )}
+
+        <div className="mt-6 pt-4 border-t border-dji-500/20 text-center">
+          <Link
+            href="/sign-in"
+            className="text-dji-400 hover:text-dji-300 font-futuristic text-sm underline touch-manipulation"
+          >
+            Already have an account? Sign in
+          </Link>
+        </div>
       </div>
     </main>
   )

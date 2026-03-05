@@ -72,7 +72,10 @@ export function DemoSignIn() {
           </svg>
         </button>
 
-        <div className="pt-4 border-t border-dji-500/20">
+        <div className="pt-4 border-t border-dji-500/20 space-y-3">
+          <p className="text-center text-sm text-slate-500 font-futuristic">
+            <a href="/sign-up" className="text-dji-400 hover:text-dji-300 underline touch-manipulation">Create account</a>
+          </p>
           <button
             type="button"
             onClick={() => setShowAdminForm(!showAdminForm)}

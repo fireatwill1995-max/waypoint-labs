@@ -128,10 +128,7 @@ export default function CivilianPage() {
       // localStorage may be unavailable
     }
 
-    if (role === 'military') {
-      router.push('/military')
-      return
-    }
+    // Military and pilot users stay on civilian dashboard (unified ops); no redirect.
     if (role === 'admin') {
       router.push('/admin')
       return
