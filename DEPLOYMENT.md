@@ -142,6 +142,30 @@ The repo includes a **Dockerfile** for the Next.js app (standalone output). It d
 3. **Branch:** The workflow runs on push to **main** or **master**. Push to one of those branches (or run the workflow manually from the Actions tab).
 4. **Direct Upload:** The Action builds in GitHub and uploads the `out` folder. The Cloudflare project must be created with **Direct Upload** (not “Connect to Git”) so it accepts uploads from the API.
 
+## Verify Cloudflare deploy and run E2E
+
+### Confirm the Cloudflare workflow
+
+1. Open your repo on GitHub → **Actions** tab.
+2. Select the workflow **“Deploy to Cloudflare Pages”**. After a push to `main` or `master`, the latest run should appear.
+3. Open the run and confirm the job **“Build and deploy to Cloudflare Pages”** completes (green check).
+4. Open your Pages URL (e.g. `https://waypoint-labs.pages.dev`) and confirm the site loads and shows the latest changes (e.g. Select Role page, Sign up form).
+
+If the workflow fails, check: **Settings → Secrets and variables → Actions** for `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`, and that the Cloudflare project name is **waypoint-labs** (see “Repo not loading to Cloudflare?” above).
+
+### Run E2E locally
+
+- **Full suite (starts dev server automatically):**  
+  `npm run test:e2e`
+- **With Playwright UI (for debugging):**  
+  `npm run test:e2e:ui`
+
+Tests live in `e2e/` and cover sign-in, sign-up, select-role (Civilian/Military/Pilot/Admin), and the admin Add User modal.
+
+### E2E in CI
+
+The workflow **“E2E Tests”** (`.github/workflows/e2e.yml`) runs on push/PR to `main` or `master`: it builds the app, starts it, and runs `npm run test:e2e` with `CI=1` (single worker, no built-in web server). Check the **Actions** tab for the **E2E Tests** run.
+
 ## Notes
 
 - Next.js 14 App Router; demo auth only (no Clerk).
