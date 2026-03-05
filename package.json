@@ -10,6 +10,8 @@
     "lint": "next lint",
     "test": "jest --config jest.config.js",
     "test:watch": "jest --config jest.config.js --watch",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "ngrok": "node scripts/ngrok.js",
     "watermarks:split": "node scripts/split-watermarks.js public/watermarks/source/4way.png public/watermarks/source/control-center.png"
   },
@@ -19,6 +21,7 @@
     "react-dom": "^18.3.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.19.27",
     "@types/react": "^18.3.0",
