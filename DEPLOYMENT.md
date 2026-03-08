@@ -1,5 +1,17 @@
 # Deployment Guide – Waypoint Labs
 
+## Required for push-to-deploy (GitHub Actions)
+
+For pushes to `main`/`master` to deploy the **frontend** to Cloudflare Pages and the **backend** to Fly.io, add these in **GitHub → Settings → Secrets and variables → Actions**:
+
+| Secret | Where to get it |
+|--------|------------------|
+| `CLOUDFLARE_API_TOKEN` | Cloudflare: My Profile → API Tokens → Create Token (e.g. “Edit Cloudflare Workers”) |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare Dashboard → right sidebar or URL |
+| `FLY_API_TOKEN` | [fly.io/user/settings/tokens](https://fly.io/user/settings/tokens) → Create token |
+
+Without these, the “Deploy to Cloudflare Pages” and “Deploy to Fly.io” workflows will fail. After adding them, re-run the workflows from the **Actions** tab or push a new commit.
+
 ## Prerequisites
 
 - **Node.js** 20+
