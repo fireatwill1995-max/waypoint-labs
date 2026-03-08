@@ -28,6 +28,7 @@ export default function CesiumMissionView({
 }: CesiumMissionViewProps) {
   const cesiumContainerRef = useRef<HTMLDivElement>(null)
   const [cesiumLoaded, setCesiumLoaded] = useState(false)
+  const [loadError, setLoadError] = useState<string | null>(null)
   interface CesiumEntity {
     position?: unknown
     [key: string]: unknown
@@ -55,41 +56,14 @@ export default function CesiumMissionView({
   const viewerRef = useRef<CesiumViewer | null>(null)
 
   useEffect(() => {
-    // Dynamically load Cesium
-    const loadCesium = async () => {
-      try {
-        // Check if Cesium is already loaded
-        if ((window as WindowWithCesium).Cesium) {
-          initializeCesium()
-          return
-        }
-
-        // Load Cesium from CDN
-        const script = document.createElement('script')
-        script.src = 'https://cesium.com/downloads/cesiumjs/releases/1.110/Build/Cesium/Cesium.js'
-        script.onload = () => {
-          // Load CSS
-          const link = document.createElement('link')
-          link.rel = 'stylesheet'
-          link.href = 'https://cesium.com/downloads/cesiumjs/releases/1.110/Build/Cesium/Widgets/widgets.css'
-          document.head.appendChild(link)
-          
-          ;(window as WindowWithCesium).CESIUM_BASE_URL = 'https://cesium.com/downloads/cesiumjs/releases/1.110/Build/Cesium/'
-          initializeCesium()
-        }
-        script.onerror = () => {
-          logger.error('Failed to load Cesium. Using fallback map view.')
-          setCesiumLoaded(false)
-        }
-        document.head.appendChild(script)
-      } catch (error) {
-        logger.error('Error loading Cesium:', error)
-        setCesiumLoaded(false)
-      }
-    }
+    let timeoutId: ReturnType<typeof setTimeout> | null = null
+    const LOAD_TIMEOUT_MS = 15000
 
     const initializeCesium = () => {
-      if (!cesiumContainerRef.current) return
+      if (!cesiumContainerRef.current) {
+        logger.warn('Cesium container ref not ready, skipping init')
+        return
+      }
 
       try {
         const Cesium = (window as WindowWithCesium).Cesium
@@ -106,6 +80,7 @@ export default function CesiumMissionView({
         const cesiumCesium = Cesium as {
           Viewer: new (container: HTMLElement, options: unknown) => CesiumViewer
           createWorldTerrain: () => unknown
+          EllipsoidTerrainProvider: new () => unknown
           OpenStreetMapImageryProvider: new (options: { url: string }) => unknown
           Cartesian3: {
             fromDegrees: (lon: number, lat: number, height: number) => unknown
@@ -142,9 +117,12 @@ export default function CesiumMissionView({
           CallbackProperty: new (callback: () => unknown, isConstant: boolean) => unknown
           PolylineGlowMaterialProperty: new (options: { glowPower: number; color: unknown }) => unknown
         }
-        
+
+        // Use ellipsoid terrain so 3D view works without Cesium Ion token; set token for imagery if provided
+        const terrainProvider = new cesiumCesium.EllipsoidTerrainProvider()
+
         const cesiumViewer = new cesiumCesium.Viewer(cesiumContainerRef.current, {
-          terrainProvider: cesiumCesium.createWorldTerrain(),
+          terrainProvider,
           imageryProvider: new cesiumCesium.OpenStreetMapImageryProvider({
             url: 'https://a.tile.openstreetmap.org/'
           }),
@@ -161,20 +139,20 @@ export default function CesiumMissionView({
           fullscreenButton: true,
         })
 
-        // Set initial view
+        // Set initial view: use first waypoint or default globe view
+        const initialLon = waypoints[0]?.lon ?? 0
+        const initialLat = waypoints[0]?.lat ?? 0
+        const initialHeight = waypoints.length > 0 ? 10000 : 20000000
         cesiumViewer.camera.setView({
-          destination: cesiumCesium.Cartesian3.fromDegrees(
-            waypoints[0]?.lon || 0,
-            waypoints[0]?.lat || 0,
-            10000
-          )
+          destination: cesiumCesium.Cartesian3.fromDegrees(initialLon, initialLat, initialHeight)
         })
 
         // Add waypoints
         if (waypoints.length > 0) {
           waypoints.forEach((wp, index) => {
+            const alt = typeof wp.alt === 'number' && !Number.isNaN(wp.alt) ? wp.alt : 100
             const entity = cesiumViewer.entities.add({
-              position: cesiumCesium.Cartesian3.fromDegrees(wp.lon, wp.lat, wp.alt),
+              position: cesiumCesium.Cartesian3.fromDegrees(wp.lon, wp.lat, alt),
               point: {
                 pixelSize: 10,
                 color: cesiumCesium.Color.YELLOW,
@@ -196,7 +174,7 @@ export default function CesiumMissionView({
                 <table>
                   <tr><td>Latitude:</td><td>${wp.lat.toFixed(6)}</td></tr>
                   <tr><td>Longitude:</td><td>${wp.lon.toFixed(6)}</td></tr>
-                  <tr><td>Altitude:</td><td>${wp.alt}m</td></tr>
+                  <tr><td>Altitude:</td><td>${alt}m</td></tr>
                 </table>
               `,
             })
@@ -209,9 +187,10 @@ export default function CesiumMissionView({
 
           // Draw route line
           if (waypoints.length > 1) {
-            const positions = waypoints.map(wp =>
-              cesiumCesium.Cartesian3.fromDegrees(wp.lon, wp.lat, wp.alt)
-            )
+            const positions = waypoints.map(wp => {
+              const h = typeof wp.alt === 'number' && !Number.isNaN(wp.alt) ? wp.alt : 100
+              return cesiumCesium.Cartesian3.fromDegrees(wp.lon, wp.lat, h)
+            })
             
             cesiumViewer.entities.add({
               polyline: {
@@ -227,19 +206,21 @@ export default function CesiumMissionView({
           }
         }
 
-        // Add drone entities
+        // Add drone entities (as points so no external model required)
         drones.forEach((drone) => {
           if (drone.position) {
             cesiumViewer.entities.add({
+              id: drone.id,
               position: cesiumCesium.Cartesian3.fromDegrees(
                 drone.position.lon,
                 drone.position.lat,
                 drone.position.alt
               ),
-              model: {
-                uri: '/models/drone.glb', // You'll need to add a drone model
-                minimumPixelSize: 64,
-                maximumScale: 20000,
+              point: {
+                pixelSize: 12,
+                color: cesiumCesium.Color.CYAN,
+                outlineColor: cesiumCesium.Color.BLACK,
+                outlineWidth: 2,
               },
               label: {
                 text: drone.name,
@@ -249,13 +230,13 @@ export default function CesiumMissionView({
                 outlineWidth: 2,
                 style: cesiumCesium.LabelStyle.FILL_AND_OUTLINE,
                 verticalOrigin: cesiumCesium.VerticalOrigin.BOTTOM,
-                pixelOffset: new cesiumCesium.Cartesian2(0, -40),
+                pixelOffset: new cesiumCesium.Cartesian2(0, -24),
               },
               description: `
                 <table>
                   <tr><td>Status:</td><td>${drone.status}</td></tr>
-                  <tr><td>Battery:</td><td>${drone.battery || 'N/A'}%</td></tr>
-                  <tr><td>Speed:</td><td>${drone.speed || 0}m/s</td></tr>
+                  <tr><td>Battery:</td><td>${drone.battery ?? 'N/A'}%</td></tr>
+                  <tr><td>Speed:</td><td>${drone.speed ?? 0} m/s</td></tr>
                 </table>
               `,
             })
@@ -298,21 +279,81 @@ export default function CesiumMissionView({
         setViewer(cesiumViewer)
         viewerRef.current = cesiumViewer
         setCesiumLoaded(true)
+        if (timeoutId) {
+          clearTimeout(timeoutId)
+          timeoutId = null
+        }
       } catch (error) {
         logger.error('Error initializing Cesium:', error)
+        setLoadError(error instanceof Error ? error.message : 'Failed to initialize 3D view.')
         setCesiumLoaded(false)
       }
     }
 
-    loadCesium()
+    const runInitWhenReady = () => {
+      requestAnimationFrame(() => {
+        if (cesiumContainerRef.current) initializeCesium()
+      })
+    }
+
+    try {
+      const win = window as WindowWithCesium
+      if (win.Cesium) {
+        runInitWhenReady()
+        return () => {
+          if (timeoutId) clearTimeout(timeoutId)
+          if (viewerRef.current) {
+            try {
+              viewerRef.current.destroy()
+              viewerRef.current = null
+            } catch {
+              // ignore cleanup errors
+            }
+          }
+        }
+      }
+
+      // CESIUM_BASE_URL must be set before the script runs so workers/assets can load
+      win.CESIUM_BASE_URL = 'https://cesium.com/downloads/cesiumjs/releases/1.110/Build/Cesium/'
+
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = 'https://cesium.com/downloads/cesiumjs/releases/1.110/Build/Cesium/Widgets/widgets.css'
+      document.head.appendChild(link)
+
+      const script = document.createElement('script')
+      script.src = 'https://cesium.com/downloads/cesiumjs/releases/1.110/Build/Cesium/Cesium.js'
+      script.async = false
+      script.onload = () => runInitWhenReady()
+      script.onerror = () => {
+        if (timeoutId) clearTimeout(timeoutId)
+        logger.error('Failed to load Cesium script.')
+        setLoadError('Could not load 3D globe script. Check network or try again.')
+        setCesiumLoaded(false)
+      }
+      document.head.appendChild(script)
+
+      timeoutId = setTimeout(() => {
+        timeoutId = null
+        if (!viewerRef.current) {
+          setLoadError('3D view is taking too long to load. Check your connection or try refreshing.')
+          setCesiumLoaded(false)
+        }
+      }, LOAD_TIMEOUT_MS)
+    } catch (error) {
+      logger.error('Error loading Cesium:', error)
+      setLoadError(error instanceof Error ? error.message : 'Failed to load 3D view.')
+      setCesiumLoaded(false)
+    }
 
     return () => {
+      if (timeoutId) clearTimeout(timeoutId)
       if (viewerRef.current) {
         try {
           viewerRef.current.destroy()
           viewerRef.current = null
-        } catch (err) {
-          // Ignore errors during cleanup
+        } catch {
+          // ignore cleanup errors
         }
       }
     }
@@ -338,15 +379,22 @@ export default function CesiumMissionView({
       // Clear existing entities
       viewer.entities.removeAll()
 
+      const C = Cesium as {
+      Cartesian3: { fromDegrees: (lon: number, lat: number, alt: number) => unknown }
+      Color: { YELLOW: unknown; BLACK: unknown; CYAN: unknown }
+      PolylineGlowMaterialProperty: new (options: { glowPower: number; color: unknown }) => unknown
+    }
+
       // Re-add waypoints
       waypoints.forEach((wp, index) => {
         try {
+          const alt = typeof wp.alt === 'number' && !Number.isNaN(wp.alt) ? wp.alt : 100
           viewer.entities.add({
-            position: (Cesium as { Cartesian3: { fromDegrees: (lon: number, lat: number, alt: number) => unknown } }).Cartesian3.fromDegrees(wp.lon, wp.lat, wp.alt),
+            position: C.Cartesian3.fromDegrees(wp.lon, wp.lat, alt),
             point: {
               pixelSize: 10,
-              color: (Cesium as { Color: { YELLOW: unknown } }).Color.YELLOW,
-              outlineColor: (Cesium as { Color: { BLACK: unknown } }).Color.BLACK,
+              color: C.Color.YELLOW,
+              outlineColor: C.Color.BLACK,
               outlineWidth: 2,
             },
             label: {
@@ -359,17 +407,22 @@ export default function CesiumMissionView({
         }
       })
 
-      // Re-add route
+      // Re-add route with same glow material as initial load
       if (waypoints.length > 1) {
         try {
-          const positions = waypoints.map(wp =>
-            (Cesium as { Cartesian3: { fromDegrees: (lon: number, lat: number, alt: number) => unknown } }).Cartesian3.fromDegrees(wp.lon, wp.lat, wp.alt)
-          )
+          const positions = waypoints.map(wp => {
+            const alt = typeof wp.alt === 'number' && !Number.isNaN(wp.alt) ? wp.alt : 100
+            return C.Cartesian3.fromDegrees(wp.lon, wp.lat, alt)
+          })
           viewer.entities.add({
             polyline: {
               positions: positions,
               width: 3,
-              material: (Cesium as { Color: { CYAN: unknown } }).Color.CYAN,
+              material: new C.PolylineGlowMaterialProperty({
+                glowPower: 0.2,
+                color: C.Color.CYAN,
+              }),
+              clampToGround: false,
             },
           })
         } catch (err) {
@@ -436,21 +489,31 @@ export default function CesiumMissionView({
     })
   }, [drones, viewer, cesiumLoaded])
 
-  if (!cesiumLoaded) {
+  if (loadError) {
     return (
-      <div className="w-full h-full flex items-center justify-center glass border border-white/20 rounded-xl">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-400">Loading 3D Mission View...</p>
-          <p className="text-xs text-slate-500 mt-2">Using fallback map view</p>
+      <div className="w-full h-full min-h-[280px] flex items-center justify-center glass border border-amber-500/30 rounded-xl" role="alert">
+        <div className="text-center px-4">
+          <p className="text-amber-400 font-futuristic font-semibold">3D view unavailable</p>
+          <p className="text-slate-400 text-sm mt-1 font-futuristic">{loadError}</p>
+          <p className="text-xs text-slate-500 mt-2 font-futuristic">Waypoints: {waypoints.length}. Add waypoints in the plan tab.</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="w-full h-full relative">
-      <div ref={cesiumContainerRef} className="w-full h-full rounded-xl overflow-hidden" />
+    <div className="w-full h-full min-h-[280px] relative rounded-xl overflow-hidden">
+      {/* Container must always be in DOM so ref exists when Cesium script loads */}
+      <div ref={cesiumContainerRef} className="w-full h-full min-h-[280px] rounded-xl overflow-hidden" style={{ minHeight: 280 }} />
+      {!cesiumLoaded && (
+        <div className="absolute inset-0 flex items-center justify-center glass border border-white/20 rounded-xl bg-slate-900/80" aria-busy="true" aria-label="Loading 3D mission view">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-dji-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" aria-hidden />
+            <p className="text-slate-400 font-futuristic">Loading 3D Mission View...</p>
+            <p className="text-xs text-slate-500 mt-2 font-futuristic">Cesium globe and waypoints</p>
+          </div>
+        </div>
+      )}
       <div className="absolute top-4 left-4 glass-strong border border-white/20 rounded-lg p-3 z-10">
         <div className="flex items-center gap-2 mb-2">
           <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>

@@ -814,15 +814,19 @@ async def get_tracking_advice(request: Dict[str, Any]):
 # Drone command endpoints
 @app.post("/api/civilian/drone/ai-command")
 async def ai_drone_command(request: Dict[str, Any]):
-    """Process AI drone command"""
+    """Process AI drone command - used by AIDroneCommandInterface and LLMCommandInterface."""
     try:
+        raw = request.get("command", "") or request.get("message", "")
+        action = raw.strip() or "command_received"
         return {
             "command": {
-                "action": request.get("command", ""),
+                "action": action,
                 "safety_approved": True,
-                "confidence": 0.9
+                "confidence": 0.9,
+                "reasoning": "Command accepted for execution. Confirm to run.",
+                "parameters": request.get("parameters") or {},
             },
-            "safety_warnings": []
+            "safety_warnings": [],
         }
     except Exception as e:
         _logger.exception("Server error")

@@ -7,6 +7,26 @@ interface FetchOptions extends Omit<RequestInit, 'body'> {
   signal?: AbortSignal
 }
 
+/** Production backend URL when frontend is deployed statically (e.g. Cloudflare Pages). */
+const FALLBACK_API_BASE = 'https://civilian-drone-app.fly.dev'
+
+/**
+ * Resolve API base URL so that static deployments (e.g. waypoint-labs.pages.dev) always
+ * send /api/* requests to the backend, never to the static origin (which returns 405 for POST).
+ */
+function getApiBaseUrl(): string {
+  const fromEnv = typeof process.env.NEXT_PUBLIC_API_URL === 'string'
+    ? process.env.NEXT_PUBLIC_API_URL.trim()
+    : ''
+  if (fromEnv) return fromEnv.replace(/\/$/, '')
+  if (typeof window !== 'undefined') {
+    const origin = window.location?.origin || ''
+    const isLocal = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin)
+    if (!isLocal) return FALLBACK_API_BASE
+  }
+  return ''
+}
+
 // Import useSafeAuth from the proper location
 import { useSafeAuth } from '../hooks/useSafeAuth'
 
@@ -16,10 +36,7 @@ export function useApi() {
   const fetchWithAuth = useCallback(async (url: string, options: FetchOptions = {}): Promise<unknown> => {
     try {
       const token = await auth.getToken()
-      
-      // Use relative path to leverage Next.js rewrite rules (avoids CORS when same-origin)
-      // When NEXT_PUBLIC_API_URL is set (e.g. static export / Cloudflare), requests go directly to backend
-      const base = typeof process.env.NEXT_PUBLIC_API_URL === 'string' ? process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, '') : ''
+      const base = getApiBaseUrl()
       const fullUrl = url.startsWith('http')
         ? url
         : base && url.startsWith('/')
