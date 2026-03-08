@@ -27,8 +27,9 @@ test.describe('Select Role', () => {
     await page.getByRole('button', { name: /select pilot/i }).click()
     await expect(page).toHaveURL(/\/pilot/, { timeout: 15000 })
     await expect(page.getByRole('heading', { name: /^pilot$/i })).toBeVisible()
-    await expect(page.getByRole('link', { name: /open dashboard/i })).toBeVisible()
-    await page.getByRole('link', { name: /open dashboard/i }).click()
+    const pilotDashboardLink = page.getByRole('link', { name: /open unified dashboard/i })
+    await expect(pilotDashboardLink).toBeVisible()
+    await pilotDashboardLink.click()
     await expect(page).toHaveURL(/\/civilian/)
   })
 
