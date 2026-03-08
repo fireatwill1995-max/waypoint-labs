@@ -54,8 +54,13 @@ export default function SignUpClient() {
 
         {submitted ? (
           <div className="text-center py-6" role="status" aria-live="polite">
-            <div className="w-12 h-12 border-4 border-dji-500/50 border-t-dji-400 rounded-full animate-spin mx-auto mb-4" aria-hidden />
-            <p className="text-slate-300 font-futuristic">Redirecting to sign in...</p>
+            <div className="w-12 h-12 rounded-full bg-dji-500/20 border-2 border-dji-500/50 flex items-center justify-center mx-auto mb-4" aria-hidden>
+              <svg className="w-6 h-6 text-dji-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <p className="text-dji-300 font-futuristic font-semibold">Account created successfully</p>
+            <p className="text-slate-300 font-futuristic mt-2">Redirecting to sign in...</p>
             <p className="text-slate-500 text-sm font-futuristic mt-2">
               Complete sign in there to access the dashboard.
             </p>

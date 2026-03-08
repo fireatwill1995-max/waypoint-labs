@@ -32,8 +32,8 @@ const DRONE_CATEGORIES = [
 
 export default function SupportedDronesPage() {
   return (
-    <main id="main-content" className="min-h-screen bg-app-dji text-readable">
-      <div className="absolute inset-0 bg-app-dji-gradient" />
+    <main id="main-content" className="min-h-screen relative bg-app-dji text-readable">
+      <div className="absolute inset-0 bg-app-dji-gradient" aria-hidden />
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9InJnYmEoOSwxMTMsMjA2LDAuMDYpIiBmaWxsLW9wYWNpdHk9IjEiPjxjpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMSIvPjwvZz48L2c+PC9zdmc+')] opacity-40" />
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <div className="text-center mb-12 sm:mb-16">

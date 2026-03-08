@@ -101,8 +101,12 @@ export default function SelectRolePage() {
         </div>
 
         <p className="text-center mt-8 text-slate-500 text-sm font-futuristic">
-          <Link href="/sign-in" className="text-dji-400 hover:text-dji-300 underline">
+          <Link href="/civilian" className="text-dji-400 hover:text-dji-300 underline">
             Already signed in? Go to dashboard
+          </Link>
+          <span className="mx-2 text-slate-600">|</span>
+          <Link href="/sign-in" className="text-dji-400 hover:text-dji-300 underline">
+            Sign in
           </Link>
         </p>
       </div>

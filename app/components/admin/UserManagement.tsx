@@ -25,6 +25,7 @@ export default function UserManagement() {
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null)
   const [showAddUserModal, setShowAddUserModal] = useState(false)
+  const [loadError, setLoadError] = useState<string | null>(null)
   const { fetchWithAuth } = useApi()
   const { success, error: showError } = useToast()
 
@@ -37,12 +38,15 @@ export default function UserManagement() {
   const loadUsers = async () => {
     try {
       setLoading(true)
+      setLoadError(null)
       const data = await fetchWithAuth('/api/admin/users') as { users?: User[] } | null
       setUsers(data?.users || [])
     } catch (error) {
       const errorMessage = handleApiError(error, 'Failed to load users')
       logger.error('Failed to load users:', error)
+      setLoadError(errorMessage)
       showError(errorMessage)
+      setUsers([])
     } finally {
       setLoading(false)
     }
@@ -124,6 +128,21 @@ export default function UserManagement() {
         </button>
       </div>
 
+      {loadError && (
+        <div className="card-glass p-4 border border-amber-500/30 rounded-xl mb-6" role="alert">
+          <p className="text-amber-200 font-futuristic text-sm">
+            Could not load users. The backend may be offline or the admin users API is not available.
+          </p>
+          <button
+            type="button"
+            onClick={() => loadUsers()}
+            className="mt-3 px-4 py-2 bg-dji-500/20 border border-dji-500/40 text-dji-300 rounded-lg hover:bg-dji-500/30 font-futuristic text-sm"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
       <div className="card-glass overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -137,6 +156,17 @@ export default function UserManagement() {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
+              {users.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center">
+                    <p className="text-slate-400 font-futuristic">
+                      {loadError
+                        ? 'Users could not be loaded. Use the Retry button above.'
+                        : 'No users yet. Add users via the backend or invite flow when available.'}
+                    </p>
+                  </td>
+                </tr>
+              ) : null}
               {users.map((user) => (
                 <tr key={user.id} className="hover:bg-white/5 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap">

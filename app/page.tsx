@@ -193,21 +193,29 @@ export default function Home() {
         </section>
 
         {/* CTA */}
-        <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-8 border-t border-dji-500/10">
+        <section className="py-16 sm:py-24 px-4 sm:px-6 md:px-8 border-t border-dji-500/10" aria-labelledby="cta-heading">
           <div className="max-w-3xl mx-auto text-center card-dji p-8 sm:p-12 border-2 border-dji-500/30 rounded-2xl">
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 font-futuristic mb-4">
+            <h2 id="cta-heading" className="text-2xl sm:text-3xl font-bold text-slate-100 font-futuristic mb-4">
               Sign Up Today
             </h2>
             <p className="text-slate-300 mb-6 font-futuristic">
               Select the right plan for you or your organization. Get started in minutes.
             </p>
-            <Link
-              href="/sign-in"
-              className="btn-dji inline-flex items-center gap-2 text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4"
-            >
-              Get Started
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/sign-up"
+                className="btn-dji inline-flex items-center justify-center gap-2 text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 touch-manipulation"
+              >
+                Create account
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+              </Link>
+              <Link
+                href="/sign-in"
+                className="btn-dji-secondary inline-flex items-center justify-center gap-2 text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-xl border-2 border-dji-500/50 touch-manipulation"
+              >
+                Sign in
+              </Link>
+            </div>
           </div>
         </section>
       </div>
